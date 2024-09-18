@@ -12,6 +12,9 @@ __Computing IDs:__ cru8jn, ncq9fn, frv9sc, kmp3xr, sth3mm
 # How to install required dependencies:
 `pip install -r requirements.txt`
 
+# Set heroku default to this app so you don't have to type "--app academic-project-tracker"
+`heroku git:remote -a academic-project-tracker`
+
 # Heroku database migrations
 `heroku run python AcademicProjectTracker/manage.py migrate --app academic-project-tracker`
 
