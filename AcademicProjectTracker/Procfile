@@ -1,1 +1,1 @@
-web: gunicorn academic-project-tracker.wsgi
+web: gunicorn AcademicProjectTracker.wsgi
