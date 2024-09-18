@@ -10,8 +10,16 @@ __Computing IDs:__ cru8jn, ncq9fn, frv9sc, kmp3xr, sth3mm
 
 
 # How to install required dependencies:
-
 `pip install -r requirements.txt`
 
+# Heroku database migrations
+`heroku run python AcademicProjectTracker/manage.py migrate --app academic-project-tracker`
 
+# Check web dynos are running
+`heroku ps:scale web=1 --app academic-project-tracker`
 
+# Collect static files
+`heroku run python AcademicProjectTracker/manage.py --app academic-project-tracker`
+
+# Check Heroku Logs
+`heroku logs --tail --app academic-project-tracker`
