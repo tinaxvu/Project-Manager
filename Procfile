@@ -1,1 +1,1 @@
-web: gunicorn AcademicProjectTracker.wsgi
+web: gunicorn AcademicProjectTracker.AcademicProjectTracker.wsgi:application
