@@ -1,1 +1,0 @@
-web: gunicorn AcademicProjectTracker.AcademicProjectTracker.wsgi:application
