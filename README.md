@@ -8,6 +8,9 @@ __Computing IDs:__ cru8jn, ncq9fn, frv9sc, kmp3xr, sth3mm
 # PLEASE READ:
 - please do not push to main haphazardly, this is the Heroku production branch. Heroku will auto deploy main pushes right now
 
+# Start Django locally
+1. `python manage.py migrate`
+2. `python manage.py runserver`
 
 # How to install required dependencies:
 `pip install -r requirements.txt`
