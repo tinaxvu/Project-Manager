@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'social_django',
 ]
 
 MIDDLEWARE = [
@@ -55,7 +56,7 @@ ROOT_URLCONF = 'AcademicProjectTracker.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'AcademicProjectTracker/templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -100,6 +101,21 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.google.GoogleOAuth2',  # for Google OAuth 2.0
+    'django.contrib.auth.backends.ModelBackend',  # keep the default model backend
+)
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '963470658186-dkf5s90jfvdtsmje30t9r9d3otlcv651.apps.googleusercontent.com'  # Replace with your actual Client ID
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'  # Replace with your actual Client Secret
+
+LOGIN_URL = '/'  # or any custom URL where your login page is located
+LOGOUT_URL = '/'
+LOGIN_REDIRECT_URL = '/'  # Where the user is redirected after successful login
+LOGOUT_REDIRECT_URL = '/'  # Where the user is redirected after logout
+
+# URL namespace for social authentication
+SOCIAL_AUTH_URL_NAMESPACE = 'social'
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
