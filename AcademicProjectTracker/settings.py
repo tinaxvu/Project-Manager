@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'social_django',
-    'users',
+    'users.apps.UsersConfig',
     'landing',
 ]
 
