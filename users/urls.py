@@ -6,5 +6,5 @@ from .views import user_profile
 app_name = 'users'
 
 urlpatterns = [
-    path('profile/', user_profile, name='profile'),  # URL for user profile
+    path('profile/', user_profile, name='profile'),
 ]
