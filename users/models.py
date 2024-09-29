@@ -8,7 +8,7 @@ class UserProfile:
 
     # Hardcoded user data
     USERS = {
-        'ncq9fn@virginia.edu': {'username': 'user1', 'role': 'admin'},
+        'ncq9fn@virginia.edu': {'username': 'ncq9fn', 'role': 'admin'},
         'user2@gmail.com': {'username': 'user2', 'role': 'common_user'},
         # Add more users as needed
     }

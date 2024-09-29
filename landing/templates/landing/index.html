@@ -10,14 +10,10 @@
     <h1>Welcome to the Project Management Application</h1>
 
     {% if user.is_authenticated %}
-        <p>You are logged in as: {{ user.username }}</p>
+        <p>You are logged in as: {{ email }}</p>
+        <p>Your permissions: {{ role }}</p>  {# Display user role #}
 
-        {# Display user permissions based on role #}
-        {% with user.profile.role as role %}
-            <p>Your permissions: {{ role }}</p>
-        {% endwith %}
-
-        <a href="{% url 'users:logout' %}">Logout</a>
+        <a href="{% url 'logout' %}">Logout</a>
     {% else %}
         <p>You are not logged in.</p>
         <a href="{% url 'social:begin' 'google-oauth2' %}">Login with Google</a>

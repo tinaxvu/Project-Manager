@@ -1,9 +1,10 @@
+# users/urls.py
+
 from django.urls import path
-from . import views
+from .views import user_profile
 
 app_name = 'users'
 
 urlpatterns = [
-    path('login/', views.login_view, name='login'),  # Redirects to Google login
-    path('logout/', views.logout_view, name='logout'),  # Handles logout
+    path('profile/', user_profile, name='profile'),  # URL for user profile
 ]
