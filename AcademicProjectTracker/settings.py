@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'social_django',
     'users.apps.UsersConfig',
     'landing',
+    'bootstrap5',
 ]
 
 MIDDLEWARE = [
