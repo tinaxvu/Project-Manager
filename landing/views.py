@@ -12,3 +12,5 @@ def landing_page(request):
         return render(request, 'landing/index.html', {'email': user_email, 'groups': user_groups})
     else:
         return render(request, 'landing/index.html', {'error': 'You are not logged in.'})
+
+
