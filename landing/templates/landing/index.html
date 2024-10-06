@@ -77,7 +77,13 @@
     <div class="container my-5">
         <h1 class="text-center text-white mt-5"> Project Management Dashboard</h1>
         <p class="text-center text-white"> Welcome {{ user.first_name }}!</p>
-
+        <p class="text-center text-white">Your Role: </p>
+        {% for group in user.groups.all %}
+        <p class="text-center text-white">{{ group.name }}</p>
+        {% endfor %}
+        <div class="d-flex justify-content-center">
+        <a class="text-center text-white" href="{% url 'logout' %}">Logout</a>
+        </div>
         <div class="dashboard-grid mt-5">
             <!-- Project Name -->
             <div class="dashboard-item white-pink text-center h-100">
