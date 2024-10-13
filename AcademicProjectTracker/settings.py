@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     'users.apps.UsersConfig',
     'landing',
     'bootstrap5',
+    'projects',
+    'AcademicProjectTracker'
 ]
 
 MIDDLEWARE = [

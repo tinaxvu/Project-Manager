@@ -1,80 +1,79 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Project Management Dashboard</title>
-
-    <!-- Load Bootstrap CSS via django-bootstrap-v5 -->
-    {% load bootstrap5 %}
-    {% bootstrap_css %}
-
-    <style>
-        body {
-            background-color: #1a4b7a;
-        }
-
-        /* Grid Layout */
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            grid-gap: 20px;
-            padding: 50px;
-        }
-
-        /* Box Styles */
-        .dashboard-item {
-            padding: 40px;
-            text-align: center;
-            font-size: 1.5rem;
-            border-radius: 20px;
-            position: relative;
-            color: white;
-        }
-
-        .dashboard-item.pink {
-            background-color: #f68fb0; /* Pink background */
-        }
-
-        .dashboard-item.blue {
-            background-color: #6cc5e0; /* Blue background */
-        }
-
-        .dashboard-item.white-pink {
-            background-color: white;
-            color: #99044e; /* White background with Pink text */
-        }
-
-
-        .dashboard-item a {
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
-            color: white;
-            font-size: 2rem;
-            text-decoration: none;
-        }
-
-
-        .dashboard-item.white-pink a {
-            color: #ff007f; /* Dark pink arrow */
-        }
-
-
-        .dashboard-item img {
-            max-width: 100px;
-            margin-bottom: 20px;
-        }
-
-        h2 {
-            margin-bottom: 20px;
-            font-weight: bold;
-        }
-    </style>
-</head>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Project Management Dashboard</title>
+    
+        <!-- Load Bootstrap CSS via django-bootstrap-v5 -->
+        {% load bootstrap5 %}
+        {% bootstrap_css %}
+        <style>
+            body {
+                background-color: #1a4b7a;
+            }
+    
+            /* Grid Layout */
+            .dashboard-grid {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                grid-gap: 20px;
+                padding: 50px;
+            }
+    
+            /* Box Styles */
+            .dashboard-item {
+                padding: 40px;
+                text-align: center;
+                font-size: 1.5rem;
+                border-radius: 20px;
+                position: relative;
+                color: white;
+            }
+    
+            .dashboard-item.pink {
+                background-color: #f68fb0; /* Pink background */
+            }
+    
+            .dashboard-item.blue {
+                background-color: #6cc5e0; /* Blue background */
+            }
+    
+            .dashboard-item.white-pink {
+                background-color: white;
+                color: #99044e; /* White background with Pink text */
+            }
+    
+    
+            .dashboard-item a {
+                position: absolute;
+                bottom: 20px;
+                right: 20px;
+                color: white;
+                font-size: 2rem;
+                text-decoration: none;
+            }
+    
+    
+            .dashboard-item.white-pink a {
+                color: #ff007f; /* Dark pink arrow */
+            }
+    
+    
+            .dashboard-item img {
+                max-width: 100px;
+                margin-bottom: 20px;
+            }
+    
+            h2 {
+                margin-bottom: 20px;
+                font-weight: bold;
+            }
+        </style>
+    </head>
 <body>
     {% if user.is_authenticated %}
-    <div class="container my-5">
+    <div>
         <h1 class="text-center text-white mt-5"> Project Management Dashboard</h1>
         <p class="text-center text-white"> Welcome {{ user.first_name }}!</p>
         <p class="text-center text-white">Your Role: </p>
@@ -84,69 +83,25 @@
         <div class="d-flex justify-content-center">
         <a class="text-center text-white" href="{% url 'logout' %}">Logout</a>
         </div>
-        <div class="dashboard-grid mt-5">
-            <!-- Project Name -->
-            <div class="dashboard-item white-pink text-center h-100">
-                <h2>Name of Project</h2>
-            </div>
-
-            <!-- Team Handbook -->
-            <div class="dashboard-item pink text-center h-100">
-                <h2>Team Handbook</h2>
-                <a href="{% url 'team_handbook' %}">&#10132;</a>
-            </div>
-
-            <!-- Calendar -->
-            <div class="dashboard-item pink text-center h-100">
-                <h2>Calendar</h2>
-                <a href="{% url 'calendar' %}">&#10132;</a>
-            </div>
-
-            <!-- Collaboration -->
-            <div class="dashboard-item blue text-center h-100">
-                <h2>Collaboration</h2>
-                <!-- add image -->
-                <a href="{% url 'collaboration' %}">&#10132;</a>
-            </div>
-
-            <!-- To-do's -->
-            <div class="dashboard-item blue text-center h-100">
-                <h2>To-do's</h2>
-                <a href="{% url 'todos' %}">&#10132;</a>
-            </div>
-
-            <!-- Timeline -->
-            <div class="dashboard-item blue text-center h-100">
-                <h2>Timeline</h2>
-                <!-- add image -->
-                <a href="{% url 'timeline' %}">&#10132;</a>
-            </div>
-
-            <!-- Files -->
-            <div class="dashboard-item pink text-center h-100">
-                <h2>Files</h2>
-                <a href="{% url 'files' %}">&#10132;</a>
-            </div>
-
-            <!-- Schedule Meets -->
-            <div class="dashboard-item pink text-center h-100">
-                <h2>Schedule Meets</h2>
-                <!-- add image -->
-                <a href="{% url 'schedule_meets' %}">&#10132;</a>
-            </div>
+        <div class="text-center text-white">
+            {% if projects %}
+            <h1>Your projects</h1>
+            {% for project in projects %}
+            <a href="{% url 'projects:project-detail' project.id %}">{{ project.name }}</a>
+            {% endfor %}
+            {% endif %}
+            <a href="{% url 'projects:create-project' %}">Create a project</a>
         </div>
-    </div>
+      
 
+    </div>
     {% else %}
-    <div class="container">
-        <h1 class="text-center text-white mt-5">Welcome to the Project Management Application</h1>
+    <div>
+        <h1>Welcome to the PMA</h1>
         <p class="text-center text-white">You are not logged in.</p>
         <p class="text-center">
-            <a href="{% url 'social:begin' 'google-oauth2' %}" class="btn btn-light">Login with Google</a>
+        <a href="{% url 'social:begin' 'google-oauth2' %}" class="btn btn-light">Login with Google</a>
         </p>
     </div>
     {% endif %}
-
-    {% bootstrap_javascript %}
 </body>
-</html>
