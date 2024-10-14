@@ -15,3 +15,8 @@ whitenoise==6.7.0
 social-auth-app-django==5.4.2
 django-bootstrap-v5
 psycopg2-binary==2.9.9
+pip~=24.2
+wheel~=0.41.2
+cryptography~=43.0.1
+requests~=2.32.3
+setuptools~=68.2.2
