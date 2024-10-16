@@ -20,7 +20,23 @@ def create_project(request):
 
 def project_detail(request, project_id):
     project = get_object_or_404(Project, id=project_id)  # Fetch the project by ID
-    return render(request, 'project_detail.html', {'project': project})
+
+    # check if the current user is the owner or a member
+    if project.owner == request.user or project.members.filter(id=request.user.id).exists():
+        return render(request, 'project_detail.html', {'project': project})
+    else:
+        # go to request-to-join page if the user is not a member
+        return redirect('projects:request-to-join', project_id=project.id)
+
+
+# projects/views.py
+
+@login_required
+def request_to_join(request, project_id):
+    project = get_object_or_404(Project, id=project_id)
+
+    return render(request, 'specific_pages/request_to_join.html', {'project': project})
+
 
 
 @login_required
