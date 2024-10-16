@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Project Management Dashboard</title>
 
-    <!-- Load Bootstrap CSS via django-bootstrap-v5 -->
     {% load bootstrap5 %}
     {% bootstrap_css %}
 
@@ -13,39 +12,29 @@
         body {
             background-color: #1a4b7a;
         }
-
-        /* Grid Layout */
         .dashboard-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             grid-gap: 20px;
             padding: 50px;
         }
-
-        /* Box Styles */
         .dashboard-item {
             padding: 40px;
             text-align: center;
             font-size: 1.5rem;
             border-radius: 20px;
-            position: relative;
             color: white;
         }
-
         .dashboard-item.pink {
-            background-color: #f68fb0; /* Pink background */
+            background-color: #f68fb0;
         }
-
         .dashboard-item.blue {
-            background-color: #6cc5e0; /* Blue background */
+            background-color: #6cc5e0;
         }
-
         .dashboard-item.white-pink {
             background-color: white;
-            color: #99044e; /* White background with Pink text */
+            color: #99044e;
         }
-
-
         .dashboard-item a {
             position: absolute;
             bottom: 20px;
@@ -54,21 +43,29 @@
             font-size: 2rem;
             text-decoration: none;
         }
-
-
-        .dashboard-item.white-pink a {
-            color: #ff007f; /* Dark pink arrow */
-        }
-
-
         .dashboard-item img {
             max-width: 100px;
             margin-bottom: 20px;
         }
-
         h2 {
             margin-bottom: 20px;
             font-weight: bold;
+        }
+
+        /* Back to Homepage Button */
+        .back-to-homepage {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #ff007f;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .back-to-homepage:hover {
+            background-color: #cc005f;
         }
     </style>
 </head>
@@ -97,7 +94,6 @@
             <!-- Collaboration -->
             <div class="dashboard-item blue text-center h-100">
                 <h2>Collaboration</h2>
-                <!-- add image -->
                 <a href="{% url 'projects:collaboration' %}">&#10132;</a>
             </div>
 
@@ -110,7 +106,6 @@
             <!-- Timeline -->
             <div class="dashboard-item blue text-center h-100">
                 <h2>Timeline</h2>
-                <!-- add image -->
                 <a href="{% url 'projects:timeline' %}">&#10132;</a>
             </div>
 
@@ -123,11 +118,13 @@
             <!-- Schedule Meets -->
             <div class="dashboard-item pink text-center h-100">
                 <h2>Schedule Meets</h2>
-                <!-- add image -->
                 <a href="{% url 'projects:schedule-meets' %}">&#10132;</a>
             </div>
         </div>
     </div>
+
+    <!-- Back to Homepage -->
+    <a href="/" class="back-to-homepage">Back to Homepage</a>
 
     {% else %}
     <div class="container">
