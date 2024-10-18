@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Request to Join {{ project.name }}</title>
+</head>
+<body>
+    <h1>Request to Join {{ project.name }}</h1>
+    <p>You are not a member of this project yet.</p>
+
+    <form method="post" action="{% url 'projects:request-to-join' project.id %}">
+        {% csrf_token %}
+        <button type="submit">Request to Join</button>
+    </form>
+</body>
+</html>
