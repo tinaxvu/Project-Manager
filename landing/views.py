@@ -4,9 +4,9 @@ from projects.models import Project
 
 def landing_page(request):
     if request.user.is_authenticated:
-        user_projects = Project.objects.filter(owner=request.user)
+        user_projects = Project.objects.filter(created_by=request.user)
 
-        all_projects = Project.objects.exclude(owner=request.user)
+        all_projects = Project.objects.exclude(created_by=request.user)
 
         return render(request, 'landing/index.html', {
             'user_projects': user_projects,

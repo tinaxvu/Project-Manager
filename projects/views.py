@@ -9,7 +9,7 @@ def create_project(request):
         form = ProjectForm(request.POST)
         if form.is_valid():
             project = form.save(commit=False)
-            project.owner = request.user  # Associate the project with the logged-in user
+            project.created_by = request.user  # Associate the project with the logged-in user
             project.save()
             return redirect('/')  # Replace 'project_list' with the appropriate URL
     else:
@@ -22,7 +22,7 @@ def project_detail(request, project_id):
     project = get_object_or_404(Project, id=project_id)  # Fetch the project by ID
 
     # check if the current user is the owner or a member
-    if project.owner == request.user or project.members.filter(id=request.user.id).exists():
+    if project.created_by == request.user or project.members.filter(id=request.user.id).exists():
         return render(request, 'project_detail.html', {'project': project})
     else:
         # go to request-to-join page if the user is not a member

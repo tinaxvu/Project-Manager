@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'social_django',
-    'users.apps.UsersConfig',
+    'users',
     'landing',
     'bootstrap5',
     'projects',
