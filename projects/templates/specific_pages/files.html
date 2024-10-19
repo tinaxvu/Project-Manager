@@ -10,9 +10,9 @@
 
 <h3>Uploaded Files</h3>
 <ul>
-  {% for file in project.fileupload_set.all %}
+  {% for file, url in files.items %}
     <li>
-      <a href="{{ file.file.url }}">{{ file.file.name }}</a> - Uploaded by {{ file.uploaded_by }}
+      <a href="{{ url }}">{{ file.file.name }}</a> - Uploaded by {{ file.uploaded_by }}
     </li>
   {% empty %}
     <li>No files uploaded yet.</li>
