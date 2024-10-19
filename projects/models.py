@@ -1,8 +1,8 @@
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
+from django.contrib.auth import get_user_model
 
-# from users.models import User
 
 class Project(models.Model):
     name = models.CharField(max_length=200)
@@ -14,6 +14,7 @@ class Project(models.Model):
 
     def __str__(self):
         return self.name
+
 
 class Todo(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="todos")
@@ -27,6 +28,7 @@ class Todo(models.Model):
     def __str__(self):
         return self.description
 
+
 class Calendar(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="calendar_events")
     title = models.CharField(max_length=200)
@@ -36,6 +38,7 @@ class Calendar(models.Model):
 
     def __str__(self):
         return self.title
+
 
 class Collaboration(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="collaborations")
@@ -47,6 +50,7 @@ class Collaboration(models.Model):
     def __str__(self):
         return self.title
 
+
 class TeamHandbook(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="team_handbook")
     name = models.CharField(max_length=100)
@@ -55,15 +59,17 @@ class TeamHandbook(models.Model):
     def __str__(self):
         return f"{self.user.custom_username}'s description"
 
+
 class FileUpload(models.Model):
-    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="files")
-    uploaded_by = models.ForeignKey('users.User', on_delete=models.SET_NULL, null=True, related_name="uploaded_files")
-    file_name = models.CharField(max_length=255, default="Untitled File")
-    s3_url = models.URLField(default="")
+    User = get_user_model()
+    project = models.ForeignKey('Project', on_delete=models.CASCADE, related_name="files")
+    uploaded_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="uploaded_files")
+    file = models.FileField(upload_to='uploads/', null=True, blank=True)
     upload_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.file_name
+        return self.file.name
+
 
 class Timeline(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="timeline")
@@ -72,6 +78,7 @@ class Timeline(models.Model):
 
     def __str__(self):
         return self.event
+
 
 class ScheduleMeet(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="schedule_meets")

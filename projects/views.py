@@ -3,6 +3,7 @@ from .models import Project
 from .forms import ProjectForm
 from django.contrib.auth.decorators import login_required
 
+
 @login_required
 def create_project(request):
     if request.method == 'POST':
@@ -14,7 +15,7 @@ def create_project(request):
             return redirect('/')  # Replace 'project_list' with the appropriate URL
     else:
         form = ProjectForm()
-    
+
     return render(request, 'create_project.html', {'form': form})
 
 
@@ -38,30 +39,35 @@ def request_to_join(request, project_id):
     return render(request, 'specific_pages/request_to_join.html', {'project': project})
 
 
-
 @login_required
 def calendar_view(request):
     return render(request, 'specific_pages/calendar.html')
+
 
 @login_required
 def team_handbook_view(request):
     return render(request, 'specific_pages/team_handbook.html')
 
+
 @login_required
 def collaboration_view(request):
     return render(request, 'specific_pages/collaboration.html')
+
 
 @login_required
 def todos_view(request):
     return render(request, 'specific_pages/todos.html')
 
+
 @login_required
 def timeline_view(request):
     return render(request, 'specific_pages/timeline.html')
 
+
 @login_required
 def files_view(request):
     return render(request, 'specific_pages/files.html')
+
 
 @login_required
 def schedule_meets_view(request):

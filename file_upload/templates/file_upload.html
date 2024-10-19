@@ -18,14 +18,5 @@
         </select>
         <button type="submit">Upload</button>
     </form>
-
-    <h2>Files for {{ project.name }}</h2>
-    <ul>
-      {% for file in files %}
-        <li><a href="{{ file.file.url }}">{{ file.file.name }}</a> (Uploaded at: {{ file.uploaded_at }})</li>
-      {% empty %}
-        <li>No files uploaded yet.</li>
-      {% endfor %}
-    </ul>
 </body>
 </html>

@@ -6,24 +6,6 @@ from django.core.files.storage import default_storage
 from django.http import HttpResponseForbidden
 from .models import Project, FileUpload
 
-
-@login_required
-def user_projects(request):
-    projects = request.user.projects.all()  # Get all projects associated with the user
-    return render(request, 'file_upload/user_projects.html', {'projects': projects})
-
-
-@login_required
-def project_files(request, project_id):
-    # Fetch the project by id and check if the user is a member
-    project = Project.objects.filter(id=project_id, members=request.user).first()
-    if project:
-        files = project.files.all()
-        return render(request, 'file_upload/project_files.html', {'project': project, 'files': files})
-    else:
-        return HttpResponseForbidden("You do not have access to this project.")
-
-
 def upload_file(request):
     if request.method == 'POST':
         form = FileUploadForm(request.POST, request.FILES)
