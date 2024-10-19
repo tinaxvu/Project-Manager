@@ -1,7 +1,25 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Project
-from .forms import ProjectForm
+from .models import Project, FileUpload
+from .forms import ProjectForm, FileUploadForm
 from django.contrib.auth.decorators import login_required
+
+
+@login_required
+def project_files(request, project_id):
+    project = get_object_or_404(Project, id=project_id)
+
+    if request.method == "POST":
+        form = FileUploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            file_upload = form.save(commit=False)
+            file_upload.project = project
+            file_upload.uploaded_by = request.user
+            file_upload.save()
+            return redirect('projects:project_files', project_id=project_id)
+    else:
+        form = FileUploadForm()
+
+    return render(request, 'specific_pages/files.html', {'project': project, 'form': form})
 
 
 @login_required
@@ -65,8 +83,10 @@ def timeline_view(request):
 
 
 @login_required
-def files_view(request):
-    return render(request, 'specific_pages/files.html')
+def files_view(request, project_id):
+    project = get_object_or_404(Project, id=project_id)
+    return render(request, 'specific_pages/files.html', {'project': project})
+
 
 
 @login_required

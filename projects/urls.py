@@ -11,7 +11,7 @@ urlpatterns = [
     path('collaboration/', views.collaboration_view, name='collaboration'),  # collaboration
     path('todos/', views.todos_view, name='todos'),  # to-do's
     path('timeline/', views.timeline_view, name='timeline'),  # timeline
-    path('files/', views.files_view, name='files'),  # files
     path('schedule-meets/', views.schedule_meets_view, name='schedule-meets'),  # schedule meets
     path('<int:project_id>/request-to-join/', views.request_to_join, name='request-to-join'),  # request to join
+    path('<int:project_id>/files/', views.project_files, name='project_files'),
 ]
