@@ -1,3 +1,4 @@
+from django.contrib.auth import get_user_model
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Project
 from .forms import ProjectForm, FileUploadForm
@@ -19,6 +20,7 @@ def project_files(request, project_id):
     }
     return render(request, 'specific_pages/files.html', context)
 
+
 @login_required
 def create_project(request):
     if request.method == 'POST':
@@ -37,21 +39,47 @@ def create_project(request):
 def project_detail(request, project_id):
     project = get_object_or_404(Project, id=project_id)  # Fetch the project by ID
 
-    # check if the current user is the owner or a member
-    if project.created_by == request.user or project.members.filter(id=request.user.id).exists():
+    # Check if the current user is the owner or a member
+    if project.created_by == request.user:
+        # If the user is the owner, render the collaboration options
+        return render(request, 'project_detail.html', {'project': project})
+    elif project.members.filter(id=request.user.id).exists():
+        # If the user is a member, also render the collaboration options
         return render(request, 'project_detail.html', {'project': project})
     else:
-        # go to request-to-join page if the user is not a member
-        return redirect('projects:request-to-join', project_id=project.id)
+        # If the user is not a member, they should see the option to request to join
+        return render(request, 'specific_pages/request_to_join.html', {'project': project})
 
-
-# projects/views.py
 
 @login_required
 def request_to_join(request, project_id):
     project = get_object_or_404(Project, id=project_id)
+    user = request.user
+    if user not in project.members.all():
+        user.requested_projects.add(project)
+        return redirect('projects:project-detail', project_id=project_id)  # Redirect to project detail after requesting to join
+    return redirect('projects:project-detail', project_id=project_id)  # Ensure there's always a redirect
 
-    return render(request, 'specific_pages/request_to_join.html', {'project': project})
+
+def approve_request(request, project_id, user_id):
+    User = get_user_model()
+    project = get_object_or_404(Project, id=project_id)
+    user = get_object_or_404(User, id=user_id)
+
+    if request.user == project.created_by:
+        user.requested_projects.remove(project)
+        project.members.add(user)
+    return redirect('projects:project-detail', project_id=project_id)
+
+
+def deny_request(request, project_id, user_id):
+    User = get_user_model()
+    project = get_object_or_404(Project, id=project_id)
+    user = get_object_or_404(User, id=user_id)
+
+    if request.user == project.created_by:
+        user.requested_projects.remove(project)
+    return redirect('projects:project-detail', project_id=project_id)
 
 
 @login_required
@@ -65,8 +93,13 @@ def team_handbook_view(request):
 
 
 @login_required
-def collaboration_view(request):
-    return render(request, 'specific_pages/collaboration.html')
+def collaboration_view(request, project_id):
+    project = get_object_or_404(Project, id=project_id)
+    if project.created_by == request.user:
+        return render(request, 'specific_pages/collaboration.html', {'project': project})
+    else:
+        return redirect('projects:project-detail', project_id=project.id)  # Redirect if not owner
+
 
 
 @login_required
