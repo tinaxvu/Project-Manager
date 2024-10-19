@@ -14,6 +14,21 @@ def project_files(request, project_id):
     # Generate signed URLs for the files
     signed_urls = {file: get_signed_url(file) for file in files}
 
+    if request.method == 'POST':
+        # Check if the user is a member or the owner
+        if project.created_by == request.user or project.members.filter(id=request.user.id).exists():
+            form = FileUploadForm(request.POST, request.FILES)
+            if form.is_valid():
+                # Save the file and associate it with the project
+                file_upload = form.save(commit=False)
+                file_upload.project = project  # Associate the uploaded file with the project
+                file_upload.uploaded_by = request.user  # Associate the uploader with the file
+                file_upload.save()
+                return redirect('projects:project_files', project_id=project.id)  # Redirect to the same page after upload
+        else:
+            # Handle unauthorized access
+            return redirect('projects:project-detail', project_id=project.id)
+
     context = {
         'project': project,
         'files': signed_urls,  # Pass signed URLs to the template
@@ -57,7 +72,8 @@ def request_to_join(request, project_id):
     user = request.user
     if user not in project.members.all():
         user.requested_projects.add(project)
-        return redirect('projects:project-detail', project_id=project_id)  # Redirect to project detail after requesting to join
+        return redirect('projects:project-detail',
+                        project_id=project_id)  # Redirect to project detail after requesting to join
     return redirect('projects:project-detail', project_id=project_id)  # Ensure there's always a redirect
 
 
@@ -99,7 +115,6 @@ def collaboration_view(request, project_id):
         return render(request, 'specific_pages/collaboration.html', {'project': project})
     else:
         return redirect('projects:project-detail', project_id=project.id)  # Redirect if not owner
-
 
 
 @login_required

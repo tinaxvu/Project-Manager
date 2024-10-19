@@ -9,7 +9,7 @@ class User(AbstractUser):
                                         default='member')
     profile_picture = models.ImageField(upload_to='profile_pics/', null=True, blank=True)
     profile_description = models.TextField(blank=True, null=True)
-    requested_projects = models.ManyToManyField('projects.Project', related_name="users_requested_projects", blank=True)  # Updated related_name
+    requested_projects = models.ManyToManyField('projects.Project', related_name="users_requested_projects", blank=True)
     joined_projects = models.ManyToManyField('projects.Project', related_name="member", blank=True)
 
     def owned_projects(self):

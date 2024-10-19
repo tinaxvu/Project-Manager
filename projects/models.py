@@ -9,7 +9,7 @@ class Project(models.Model):
     description = models.TextField()
     created_by = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name="created_projects")
     members = models.ManyToManyField('users.User', related_name="member_projects")
-    requested = models.ManyToManyField('users.User', related_name="projects_requested_by_users", blank=True)  # Updated related_name
+    requested = models.ManyToManyField('users.User', related_name="projects_requested_by_users", blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -20,7 +20,6 @@ class Project(models.Model):
 
     def __str__(self):
         return self.name
-
 
 
 class Todo(models.Model):

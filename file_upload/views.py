@@ -6,6 +6,7 @@ from django.core.files.storage import default_storage
 from django.http import HttpResponseForbidden
 from .models import Project, FileUpload
 
+
 def upload_file(request):
     if request.method == 'POST':
         form = FileUploadForm(request.POST, request.FILES)
