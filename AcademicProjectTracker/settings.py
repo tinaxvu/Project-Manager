@@ -41,9 +41,14 @@ INSTALLED_APPS = [
     'users.apps.UsersConfig',
     'landing',
     'bootstrap5',
+    'projects',
+    'AcademicProjectTracker'
     'file_upload',
     'storages',
 ]
+
+AUTH_USER_MODEL = 'users.User'
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -74,6 +79,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'AcademicProjectTracker.wsgi.application'
+
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
@@ -131,6 +137,7 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
