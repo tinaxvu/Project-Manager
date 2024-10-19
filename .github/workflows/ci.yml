@@ -31,11 +31,13 @@ jobs:
             - name: Set AWS Credentials
               uses: aws-actions/configure-aws-credentials@v3
               with:
-                aws-access-key-id: ${{ vars.AWS_ACCESS_KEY_ID }}
-                aws-secret-access-key: ${{ vars.AWS_SECRET_ACCESS_KEY }}
+                aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+                aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
                 aws-region: us-east-2 # Set your AWS region here
 
-                
+            - name: Sync to S3
+              run: aws s3 sync . s3://b-19-cs3240 # Change this to your bucket name    
+
             - name: set up database
               run: python manage.py migrate
 
