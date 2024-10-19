@@ -11,12 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 import os
 from pathlib import Path
-import django_heroku
 import dj_database_url
-import sys
-
-if 'test' not in sys.argv:
-    django_heroku.settings(locals())
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -153,7 +148,9 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Heroku settings
-django_heroku.settings(locals())
+if os.environ.get('GITHUB_ACTIONS') != 'true': 
+    import django_heroku
+    django_heroku.settings(locals())
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Amazon S3 settings
