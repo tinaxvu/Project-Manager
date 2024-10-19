@@ -10,33 +10,10 @@
 
     {% if user.is_authenticated %}
         <p>You are not a member of this project yet.</p>
-
-        <!-- For non-admin users -->
-        {% if user.permission_level != 'admin' %}
-            <form method="post" action="{% url 'projects:request-to-join' project.id %}">
-                {% csrf_token %}
-                <button type="submit">Request to Join</button>
-            </form>
-
-        <!-- For admin users -->
-        {% elif user.permission_level == 'admin' %}
-            <p>Manage Requests for {{ project.name }}:</p>
-            <ul>
-                {% for requested_user in project.requested.all %}
-                    <li>
-                        {{ requested_user.username }}
-                        <form method="post" action="{% url 'projects:approve-request' project.id requested_user.id %}" style="display:inline;">
-                            {% csrf_token %}
-                            <button type="submit">Approve</button>
-                        </form>
-                        <form method="post" action="{% url 'projects:deny-request' project.id requested_user.id %}" style="display:inline;">
-                            {% csrf_token %}
-                            <button type="submit">Deny</button>
-                        </form>
-                    </li>
-                {% endfor %}
-            </ul>
-        {% endif %}
+        <form method="post" action="{% url 'projects:request-to-join' project.id %}">
+            {% csrf_token %}
+            <button type="submit">Request to Join</button>
+        </form>
     {% else %}
         <p>You need to be logged in to request to join this project.</p>
     {% endif %}
