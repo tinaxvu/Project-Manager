@@ -14,7 +14,8 @@ jobs:
         permissions:
           contents: read
           issues: write
-
+        env: 
+          AWS_STORAGE_BUCKET_NAME: b-19-cs3240
         steps:
             - name: checkout repo
               uses: actions/checkout@v3
