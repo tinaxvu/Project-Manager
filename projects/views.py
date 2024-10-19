@@ -1,7 +1,36 @@
+from django.contrib.auth import get_user_model
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Project
-from .forms import ProjectForm
+from .forms import ProjectForm, FileUploadForm
+from .utils import get_signed_url
 from django.contrib.auth.decorators import login_required
+
+
+@login_required
+def project_files(request, project_id):
+    project = get_object_or_404(Project, id=project_id)
+    files = project.files.all()
+
+    signed_urls = {file: get_signed_url(file) for file in files}
+
+    if request.method == 'POST':
+        if project.created_by == request.user or project.members.filter(id=request.user.id).exists():
+            form = FileUploadForm(request.POST, request.FILES)
+            if form.is_valid():
+                file_upload = form.save(commit=False)
+                file_upload.project = project
+                file_upload.uploaded_by = request.user
+                file_upload.save()
+                return redirect('projects:project_files', project_id=project.id)
+        else:
+            return redirect('projects:project-detail', project_id=project.id)
+
+    context = {
+        'project': project,
+        'files': signed_urls,
+    }
+    return render(request, 'specific_pages/files.html', context)
+
 
 @login_required
 def create_project(request):
@@ -9,59 +38,92 @@ def create_project(request):
         form = ProjectForm(request.POST)
         if form.is_valid():
             project = form.save(commit=False)
-            project.created_by = request.user  # Associate the project with the logged-in user
+            project.created_by = request.user
             project.save()
-            return redirect('/')  # Replace 'project_list' with the appropriate URL
+            return redirect('/')
     else:
         form = ProjectForm()
-    
+
     return render(request, 'create_project.html', {'form': form})
 
 
 def project_detail(request, project_id):
-    project = get_object_or_404(Project, id=project_id)  # Fetch the project by ID
+    project = get_object_or_404(Project, id=project_id)
 
-    # check if the current user is the owner or a member
-    if project.created_by == request.user or project.members.filter(id=request.user.id).exists():
+    if project.created_by == request.user:
+        return render(request, 'project_detail.html', {'project': project})
+    elif project.members.filter(id=request.user.id).exists():
         return render(request, 'project_detail.html', {'project': project})
     else:
-        # go to request-to-join page if the user is not a member
-        return redirect('projects:request-to-join', project_id=project.id)
+        return render(request, 'specific_pages/request_to_join.html', {'project': project})
 
-
-# projects/views.py
 
 @login_required
 def request_to_join(request, project_id):
     project = get_object_or_404(Project, id=project_id)
+    user = request.user
+    if user not in project.members.all():
+        user.requested_projects.add(project)
+        return redirect('projects:project-detail',
+                        project_id=project_id)
+    return redirect('projects:project-detail', project_id=project_id)
 
-    return render(request, 'specific_pages/request_to_join.html', {'project': project})
 
+def approve_request(request, project_id, user_id):
+    User = get_user_model()
+    project = get_object_or_404(Project, id=project_id)
+    user = get_object_or_404(User, id=user_id)
+
+    if request.user == project.created_by:
+        user.requested_projects.remove(project)
+        project.members.add(user)
+    return redirect('projects:project-detail', project_id=project_id)
+
+
+def deny_request(request, project_id, user_id):
+    User = get_user_model()
+    project = get_object_or_404(Project, id=project_id)
+    user = get_object_or_404(User, id=user_id)
+
+    if request.user == project.created_by:
+        user.requested_projects.remove(project)
+    return redirect('projects:project-detail', project_id=project_id)
 
 
 @login_required
 def calendar_view(request):
     return render(request, 'specific_pages/calendar.html')
 
+
 @login_required
 def team_handbook_view(request):
     return render(request, 'specific_pages/team_handbook.html')
 
+
 @login_required
-def collaboration_view(request):
-    return render(request, 'specific_pages/collaboration.html')
+def collaboration_view(request, project_id):
+    project = get_object_or_404(Project, id=project_id)
+    if project.created_by == request.user:
+        return render(request, 'specific_pages/collaboration.html', {'project': project})
+    else:
+        return redirect('projects:project-detail', project_id=project.id)
+
 
 @login_required
 def todos_view(request):
     return render(request, 'specific_pages/todos.html')
 
+
 @login_required
 def timeline_view(request):
     return render(request, 'specific_pages/timeline.html')
 
+
 @login_required
-def files_view(request):
-    return render(request, 'specific_pages/files.html')
+def files_view(request, project_id):
+    project = get_object_or_404(Project, id=project_id)
+    return render(request, 'specific_pages/files.html', {'project': project})
+
 
 @login_required
 def schedule_meets_view(request):

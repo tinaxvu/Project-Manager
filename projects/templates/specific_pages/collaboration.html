@@ -1,4 +1,3 @@
-<!-- landing/templates/landing/calendar.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,6 +6,27 @@
     <title>Collaboration</title>
 </head>
 <body>
-    <h1>Collaboration</h1>
+    <h1>Collaboration for {{ project.name }}</h1>
+
+    <h2>Requests to Join</h2>
+    <ul>
+        {% for user in project.users_requested_projects.all %}
+            <li>
+                {{ user.username }}
+                <a href="{% url 'projects:approve-request' project.id user.id %}">Approve</a>
+                <a href="{% url 'projects:deny-request' project.id user.id %}">Deny</a>
+            </li>
+        {% empty %}
+            <li>No requests to join.</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Current Members</h2>
+    <ul>
+        {% for member in project.members.all %}
+            <li>{{ member.username }}</li>
+        {% endfor %}
+    </ul>
+
 </body>
 </html>
