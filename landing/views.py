@@ -8,8 +8,8 @@ def landing_page(request):
         # Projects created by the user
         user_projects = Project.objects.filter(created_by=request.user)
 
-        # Projects the user is a member of
-        joined_projects = request.user.member_projects.all()
+        # Projects the user is a member of, excluding those they created
+        joined_projects = request.user.member_projects.exclude(created_by=request.user)
 
         # All projects excluding those created by the user and those they are members of
         all_projects = Project.objects.exclude(created_by=request.user).exclude(
@@ -22,4 +22,3 @@ def landing_page(request):
         })
     else:
         return render(request, 'landing/index.html')
-
