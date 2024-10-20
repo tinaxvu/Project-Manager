@@ -1,9 +1,12 @@
 from django.contrib.auth import get_user_model
+from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
+from django.views.decorators.http import require_POST
+
 from .models import Project
 from .forms import ProjectForm, FileUploadForm
 from .utils import get_signed_url
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 
 
 @login_required
@@ -47,6 +50,7 @@ def create_project(request):
     return render(request, 'create_project.html', {'form': form})
 
 
+@login_required
 def project_detail(request, project_id):
     project = get_object_or_404(Project, id=project_id)
 
@@ -128,3 +132,13 @@ def files_view(request, project_id):
 @login_required
 def schedule_meets_view(request):
     return render(request, 'specific_pages//schedule_meets.html')
+
+
+@require_POST
+def delete_project(request, project_id):
+    try:
+        project = Project.objects.get(id=project_id)
+        project.delete()
+        return JsonResponse({'status': 'success'})
+    except Project.DoesNotExist:
+        return JsonResponse({'status': 'error', 'message': 'Project not found.'}, status=404)
