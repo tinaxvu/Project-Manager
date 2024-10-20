@@ -49,13 +49,9 @@
             position: absolute;
             top: 10px;
             right: 50px;
-            color: white;
-            padding: 5px 5px;
-            border-radius: 50%;
-            font-size: 1.5rem;
-            cursor: pointer;
-            text-decoration: none;
-            font-weight: bold;
+            display: inline-block; /* Allow for size adjustments */
+            width: 30px;          /* Set a specific width */
+            height: 30px;         /* Set a specific height */
         }
         .create-project-btn {
             position: fixed;
@@ -121,6 +117,13 @@
                     <h2>{{ project.name }}</h2>
                     <p>{{ project.description }}</p>
                     <a href="{% url 'projects:project-detail' project.id %}">&#10132;</a>
+
+                    <!-- Show delete button only for admins -->
+                    {% if user.permission_level == 'admin' %}
+                        <a href="#" class="delete-project-btn" data-project-id="{{ project.id }}">
+                            &#10006;
+                        </a>
+                    {% endif %}
                 </div>
                 {% empty %}
                 <p class="text-center text-white">You are not a member of any projects.</p>
@@ -137,6 +140,13 @@
                     <h2>{{ project.name }}</h2>
                     <p>{{ project.description }}</p>
                     <a href="{% url 'projects:project-detail' project.id %}">&#10132;</a>
+
+                    <!-- Show delete button only for admins -->
+                    {% if user.permission_level == 'admin' %}
+                        <a href="#" class="delete-project-btn" data-project-id="{{ project.id }}">
+                            &#10006;
+                        </a>
+                    {% endif %}
                 </div>
                 {% empty %}
                 <p class="text-center text-white">No other projects available.</p>

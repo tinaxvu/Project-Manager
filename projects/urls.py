@@ -13,6 +13,7 @@ urlpatterns = [
     path('timeline/', views.timeline_view, name='timeline'),
     path('schedule-meets/', views.schedule_meets_view, name='schedule-meets'),
     path('<int:project_id>/files/', views.project_files, name='project_files'),
+    path('<int:project_id>/files/delete/<int:file_id>/', views.delete_file, name='delete-file'),
     path('<int:project_id>/request-to-join/', views.request_to_join, name='request-to-join'),
     path('<int:project_id>/approve-request/<int:user_id>/', views.approve_request, name='approve-request'),
     path('<int:project_id>/deny-request/<int:user_id>/', views.deny_request, name='deny-request'),
