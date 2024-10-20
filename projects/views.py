@@ -1,9 +1,12 @@
 from django.contrib.auth import get_user_model
+from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
+from django.views.decorators.http import require_POST
+
 from .models import Project
 from .forms import ProjectForm, FileUploadForm
 from .utils import get_signed_url
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 
 
 @login_required
@@ -47,10 +50,11 @@ def create_project(request):
     return render(request, 'create_project.html', {'form': form})
 
 
+@login_required
 def project_detail(request, project_id):
     project = get_object_or_404(Project, id=project_id)
 
-    if project.created_by == request.user:
+    if project.created_by == request.user or request.user.permission_level == 'admin':
         return render(request, 'project_detail.html', {'project': project})
     elif project.members.filter(id=request.user.id).exists():
         return render(request, 'project_detail.html', {'project': project})
@@ -128,3 +132,28 @@ def files_view(request, project_id):
 @login_required
 def schedule_meets_view(request):
     return render(request, 'specific_pages//schedule_meets.html')
+
+
+@require_POST
+@login_required
+def delete_project(request, project_id):
+    project = get_object_or_404(Project, id=project_id)
+
+    # Check if the user is an admin or the owner of the project
+    if request.user.permission_level == 'admin' or project.owner == request.user:
+        project.delete()
+        return JsonResponse({'success': True})
+
+    return JsonResponse({'success': False, 'error': 'You do not have permission to delete this project.'}, status=403)
+
+
+@login_required
+def delete_file(request, project_id, file_id):
+    project = get_object_or_404(Project, id=project_id)
+    file_to_delete = get_object_or_404(project.files.all(), id=file_id)
+
+    if request.user.permission_level == 'admin':
+        file_to_delete.delete()
+        return redirect('projects:project_files', project_id=project_id)
+    else:
+        return redirect('projects:project-detail', project_id=project_id)
