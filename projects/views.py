@@ -54,7 +54,7 @@ def create_project(request):
 def project_detail(request, project_id):
     project = get_object_or_404(Project, id=project_id)
 
-    if project.created_by == request.user:
+    if project.created_by == request.user or request.user.permission_level == 'admin':
         return render(request, 'project_detail.html', {'project': project})
     elif project.members.filter(id=request.user.id).exists():
         return render(request, 'project_detail.html', {'project': project})
