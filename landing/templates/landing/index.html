@@ -188,21 +188,21 @@
                             'X-CSRFToken': '{{ csrf_token }}'
                         },
                         success: function(response) {
-                            if (response.status === 'success') {
+                            if (response.success) {
                                 projectBox.fadeOut(300, function() {
                                     $(this).remove();  // Remove the box after fading out
                                 });
                             } else {
-                                alert('Error: ' + response.message);
+                                alert('Error: ' + response.error); // Show the error message from the server
                             }
                         },
                         error: function(xhr, status, error) {
-                            alert('Error: ' + error);
+                            alert('An error occurred: ' + error);  // Handle error response
                         }
-                    });
-                }
             });
-        });
+        }
+    });
+});
     </script>
 </body>
 </html>

@@ -136,13 +136,15 @@ def schedule_meets_view(request):
 
 @require_POST
 @login_required
-def delete_project(project_id):
-    try:
-        project = Project.objects.get(id=project_id)
+def delete_project(request, project_id):
+    project = get_object_or_404(Project, id=project_id)
+
+    # Check if the user is an admin or the owner of the project
+    if request.user.permission_level == 'admin' or project.owner == request.user:
         project.delete()
-        return JsonResponse({'status': 'success'})
-    except Project.DoesNotExist:
-        return JsonResponse({'status': 'error', 'message': 'Project not found.'}, status=404)
+        return JsonResponse({'success': True})
+
+    return JsonResponse({'success': False, 'error': 'You do not have permission to delete this project.'}, status=403)
 
 
 @require_POST
