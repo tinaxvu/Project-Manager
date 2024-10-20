@@ -147,7 +147,6 @@ def delete_project(request, project_id):
     return JsonResponse({'success': False, 'error': 'You do not have permission to delete this project.'}, status=403)
 
 
-@require_POST
 @login_required
 def delete_file(request, project_id, file_id):
     project = get_object_or_404(Project, id=project_id)
@@ -155,6 +154,6 @@ def delete_file(request, project_id, file_id):
 
     if request.user.permission_level == 'admin':
         file_to_delete.delete()
-        return JsonResponse({'success': True})
+        return redirect('projects:project_files', project_id=project_id)
     else:
-        return JsonResponse({'success': False, 'error': 'You do not have permission to delete this file.'}, status=403)
+        return redirect('projects:project-detail', project_id=project_id)

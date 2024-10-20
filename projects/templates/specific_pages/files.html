@@ -14,7 +14,6 @@
     <li>
       <a href="{{ url }}">{{ file.file.name }}</a> - Uploaded by {{ file.uploaded_by }}
 
-      <!-- Show delete button only for admins -->
       {% if user.permission_level == 'admin' %}
         <form method="POST" action="{% url 'projects:delete-file' project.id file.id %}" style="display:inline;">
           {% csrf_token %}
