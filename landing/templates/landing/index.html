@@ -156,8 +156,9 @@
     </div>
 
     <!-- Create Project Button -->
-    <a href="{% url 'projects:create-project' %}" class="create-project-btn">Create a Project</a>
-
+    {% if user.permission_level != 'admin' %}
+        <a href="{% url 'projects:create-project' %}" class="create-project-btn">Create a Project</a>
+    {% endif %}
     {% else %}
     <div class="container text-center my-5">
         <h1>Welcome to the PMA</h1>
