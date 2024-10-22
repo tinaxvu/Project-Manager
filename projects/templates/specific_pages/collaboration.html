@@ -1,11 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Collaboration</title>
-</head>
-<body>
+{% extends 'base.html' %}
+
+{% block title %}Collaboration for {{ project.name }}{% endblock %}
+
+{% block content %}
     <h1>Collaboration for {{ project.name }}</h1>
 
     <h2>Requests to Join</h2>
@@ -27,6 +24,4 @@
             <li>{{ member.username }}</li>
         {% endfor %}
     </ul>
-
-</body>
-</html>
+{% endblock %}
