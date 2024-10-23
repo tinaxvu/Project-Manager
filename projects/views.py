@@ -95,6 +95,8 @@ def deny_request(request, project_id, user_id):
 
     if request.user == project.created_by:
         user.requested_projects.remove(project)
+        project.denied.add(user)
+
     return redirect('projects:project-detail', project_id=project_id)
 
 
