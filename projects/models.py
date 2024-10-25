@@ -72,6 +72,9 @@ class FileUpload(models.Model):
     uploaded_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="uploaded_files")
     file = models.FileField(upload_to='uploads/', null=True, blank=True)
     upload_date = models.DateTimeField(auto_now_add=True)
+    file_title = models.CharField(default="", max_length=255, help_text="Title for the file")
+    description = models.TextField(default="", help_text="Description of the file content")
+    keywords = models.TextField(help_text="Comma-separated list of keywords for the file", blank=True)
 
     def __str__(self):
         return self.file.name

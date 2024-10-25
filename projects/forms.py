@@ -12,4 +12,7 @@ class ProjectForm(forms.ModelForm):
 class FileUploadForm(forms.ModelForm):
     class Meta:
         model = FileUpload
-        fields = ['file']
+        fields = ['file', 'file_title', 'description', 'keywords']
+        widgets = {
+            'keywords': forms.TextInput(attrs={'placeholder': 'e.g., Minutes, Event Planning, Map'})
+        }

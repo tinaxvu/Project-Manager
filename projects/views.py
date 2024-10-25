@@ -10,7 +10,6 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import JsonResponse
 
 
-
 @login_required
 def project_files(request, project_id):
     project = get_object_or_404(Project, id=project_id)
