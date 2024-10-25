@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_POST
 
-from .models import Project
+from .models import Project, Tag
 from .forms import ProjectForm, FileUploadForm
 from .utils import get_signed_url
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -13,10 +13,9 @@ from django.http import JsonResponse
 @login_required
 def project_files(request, project_id):
     project = get_object_or_404(Project, id=project_id)
-    files = project.files.all()
+    selected_tags = request.GET.getlist('tags')  # Get selected tags from query parameters
 
-    signed_urls = {file: get_signed_url(file) for file in files}
-
+    # Handle file upload if method is POST
     if request.method == 'POST':
         if project.created_by == request.user or project.members.filter(id=request.user.id).exists():
             form = FileUploadForm(request.POST, request.FILES)
@@ -25,13 +24,35 @@ def project_files(request, project_id):
                 file_upload.project = project
                 file_upload.uploaded_by = request.user
                 file_upload.save()
+
+                # Parse keywords and create/associate tags
+                keywords = form.cleaned_data['keywords']
+                if keywords:
+                    tags = [tag.strip() for tag in keywords.split(',')]
+                    for tag_name in tags:
+                        # Create tag with a reference to the current project
+                        tag, created = Tag.objects.get_or_create(name=tag_name, project=project)
+                        file_upload.tags.add(tag)  # Add tag to the uploaded file
+                form.save_m2m()  # Save many-to-many relationships
                 return redirect('projects:project_files', project_id=project.id)
-        else:
-            return redirect('projects:project-detail', project_id=project.id)
+    else:
+        form = FileUploadForm()
+
+    # Filter files based on selected tags
+    if selected_tags:
+        files = project.files.filter(tags__name__in=selected_tags).distinct()
+    else:
+        files = project.files.all()
+
+    signed_urls = {file: get_signed_url(file) for file in files}
+    tags = Tag.objects.filter(project=project).distinct()
 
     context = {
         'project': project,
         'files': signed_urls,
+        'tags': tags,
+        'selected_tags': selected_tags,
+        'form': form,
     }
     return render(request, 'specific_pages/files.html', context)
 
@@ -76,6 +97,7 @@ def request_to_join(request, project_id):
         return JsonResponse({'success': False, 'message': 'Already requested'})
 
 
+@login_required
 def approve_request(request, project_id, user_id):
     User = get_user_model()
     project = get_object_or_404(Project, id=project_id)
@@ -87,6 +109,7 @@ def approve_request(request, project_id, user_id):
     return redirect('projects:project-detail', project_id=project_id)
 
 
+@login_required
 def deny_request(request, project_id, user_id):
     User = get_user_model()
     project = get_object_or_404(Project, id=project_id)

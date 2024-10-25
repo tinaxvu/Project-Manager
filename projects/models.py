@@ -66,6 +66,14 @@ class TeamHandbook(models.Model):
         return f"{self.user.custom_username}'s description"
 
 
+class Tag(models.Model):
+    name = models.CharField(max_length=50)
+    project = models.ForeignKey('Project', on_delete=models.CASCADE, related_name="tags")
+
+    def __str__(self):
+        return self.name
+
+
 class FileUpload(models.Model):
     User = get_user_model()
     project = models.ForeignKey('Project', on_delete=models.CASCADE, related_name="files")
@@ -75,6 +83,7 @@ class FileUpload(models.Model):
     file_title = models.CharField(default="", max_length=255, help_text="Title for the file")
     description = models.TextField(default="", help_text="Description of the file content")
     keywords = models.TextField(help_text="Comma-separated list of keywords for the file", blank=True)
+    tags = models.ManyToManyField(Tag, related_name="files", blank=True)
 
     def __str__(self):
         return self.file.name
