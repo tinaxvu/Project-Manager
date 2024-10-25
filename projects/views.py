@@ -7,6 +7,8 @@ from .models import Project
 from .forms import ProjectForm, FileUploadForm
 from .utils import get_signed_url
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.http import JsonResponse
+
 
 
 @login_required
@@ -66,11 +68,13 @@ def project_detail(request, project_id):
 def request_to_join(request, project_id):
     project = get_object_or_404(Project, id=project_id)
     user = request.user
-    if user not in project.members.all():
-        user.requested_projects.add(project)
-        return redirect('projects:project-detail',
-                        project_id=project_id)
-    return redirect('projects:project-detail', project_id=project_id)
+
+    # Check if the user has already requested to join
+    if project not in user.projects_requested_by_users.all():
+        project.requested.add(user)
+        return JsonResponse({'success': True})
+    else:
+        return JsonResponse({'success': False, 'message': 'Already requested'})
 
 
 def approve_request(request, project_id, user_id):
@@ -91,6 +95,8 @@ def deny_request(request, project_id, user_id):
 
     if request.user == project.created_by:
         user.requested_projects.remove(project)
+        project.denied.add(user)
+
     return redirect('projects:project-detail', project_id=project_id)
 
 

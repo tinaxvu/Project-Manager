@@ -1,21 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Collaboration</title>
-</head>
-<body>
+{% extends 'base.html' %}
+
+{% block title %}Collaboration for {{ project.name }}{% endblock %}
+
+{% block content %}
     <h1>Collaboration for {{ project.name }}</h1>
 
     <h2>Requests to Join</h2>
     <ul>
-        {% for user in project.users_requested_projects.all %}
-            <li>
-                {{ user.username }}
-                <a href="{% url 'projects:approve-request' project.id user.id %}">Approve</a>
-                <a href="{% url 'projects:deny-request' project.id user.id %}">Deny</a>
-            </li>
+    {% for user in project.requested.all %}
+        <li>
+            {{ user.username }}
+            <a href="{% url 'projects:approve-request' project.id user.id %}">Approve</a>
+            <a href="{% url 'projects:deny-request' project.id user.id %}">Deny</a>
+        </li>
         {% empty %}
             <li>No requests to join.</li>
         {% endfor %}
@@ -27,6 +24,4 @@
             <li>{{ member.username }}</li>
         {% endfor %}
     </ul>
-
-</body>
-</html>
+{% endblock %}
