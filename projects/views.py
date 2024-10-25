@@ -1,21 +1,19 @@
 from django.contrib.auth import get_user_model
-from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_POST
 
 from .models import Project, Tag
 from .forms import ProjectForm, FileUploadForm
 from .utils import get_signed_url
-from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 
 
 @login_required
 def project_files(request, project_id):
     project = get_object_or_404(Project, id=project_id)
-    selected_tags = request.GET.getlist('tags')  # Get selected tags from query parameters
+    selected_tags = request.GET.getlist('tags')
 
-    # Handle file upload if method is POST
     if request.method == 'POST':
         if project.created_by == request.user or project.members.filter(id=request.user.id).exists():
             form = FileUploadForm(request.POST, request.FILES)
@@ -30,15 +28,15 @@ def project_files(request, project_id):
                 if keywords:
                     tags = [tag.strip() for tag in keywords.split(',')]
                     for tag_name in tags:
-                        # Create tag with a reference to the current project
                         tag, created = Tag.objects.get_or_create(name=tag_name, project=project)
-                        file_upload.tags.add(tag)  # Add tag to the uploaded file
-                form.save_m2m()  # Save many-to-many relationships
+                        file_upload.tags.add(tag)
+
+                form.save_m2m()
                 return redirect('projects:project_files', project_id=project.id)
     else:
         form = FileUploadForm()
 
-    # Filter files based on selected tags
+    # Current behavior is to just take all files if they have ANY of the selected tags.
     if selected_tags:
         files = project.files.filter(tags__name__in=selected_tags).distinct()
     else:
@@ -89,7 +87,6 @@ def request_to_join(request, project_id):
     project = get_object_or_404(Project, id=project_id)
     user = request.user
 
-    # Check if the user has already requested to join
     if project not in user.projects_requested_by_users.all():
         project.requested.add(user)
         return JsonResponse({'success': True})
@@ -135,6 +132,7 @@ def team_handbook_view(request):
 @login_required
 def collaboration_view(request, project_id):
     project = get_object_or_404(Project, id=project_id)
+
     if project.created_by == request.user:
         return render(request, 'specific_pages/collaboration.html', {'project': project})
     else:
@@ -167,7 +165,6 @@ def schedule_meets_view(request):
 def delete_project(request, project_id):
     project = get_object_or_404(Project, id=project_id)
 
-    # Check if the user is an admin or the owner of the project
     if request.user.permission_level == 'admin' or project.owner == request.user:
         project.delete()
         return JsonResponse({'success': True})
