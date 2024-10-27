@@ -7,7 +7,10 @@ from .forms import ProjectForm, FileUploadForm
 from .utils import get_signed_url
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
-
+from .models import FileUpload
+from django.conf import settings
+import boto3
+import os
 
 @login_required
 def project_files(request, project_id):
@@ -54,6 +57,30 @@ def project_files(request, project_id):
     }
     return render(request, 'specific_pages/files.html', context)
 
+@login_required 
+def view_file(request, project_id, file_id):
+    project = get_object_or_404(Project, id=project_id)
+    file_upload = get_object_or_404(FileUpload, id=file_id,project=project)
+    
+    # Get the signed URL for displaying the file (so that the file is securely accessed from AWS)
+    file_url = get_signed_url(file_upload)
+    # If file is hosted on AWS S3
+    s3 = boto3.client('s3',aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+    aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,region_name=settings.AWS_S3_REGION_NAME)
+    bucket_name = settings.AWS_STORAGE_BUCKET_NAME
+    file_key = file_upload.file.name  # This is the path to the file in S3
+
+    # Get the text file content
+    file_obj = s3.get_object(Bucket=bucket_name, Key=file_key)
+    file_content = file_obj['Body'].read().decode('utf-8')  # Decode as utf-8 text
+
+    context = {
+        'project': project,
+        'file': file_upload,
+        'file_url': file_url,
+        'file_content': file_content
+    }
+    return render(request, 'specific_pages/file.html', context)
 
 @login_required
 def create_project(request):

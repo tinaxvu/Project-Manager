@@ -51,7 +51,7 @@
 <ul>
     {% for file, url in files.items %}
     <li>
-        <a href="{{ url }}">{{ file.file.name }}</a> - Uploaded by {{ file.uploaded_by }}
+        <a href="{% url 'projects:view_file' project.id file.id %}">{{ file.file.name }}</a> - Uploaded by {{ file.uploaded_by }}
 
         <ul>
             <li><strong>Title:</strong> {{ file.file_title }}</li>
