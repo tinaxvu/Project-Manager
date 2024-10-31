@@ -4,6 +4,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.utils import timezone
+import datetime
 import json
 
 from .models import Project, Calendar
@@ -110,15 +111,17 @@ def fetch_events(request, project_id):
     return JsonResponse(events_data, safe=False)
 
 
-@csrf_exempt
 def add_event(request, project_id):
-    print("Adding event...")  # Debug print statement
     project = get_object_or_404(Project, id=project_id)
     if request.method == "POST":
         data = json.loads(request.body)
         title = data.get("title")
         description = data.get("description")
-        event_date = data.get("date")
+        event_date_str = data.get("date")
+        if not title or not event_date_str:
+            return JsonResponse({"success": False, "error": "Title and date are required."}, status=400)
+
+        event_date = timezone.make_aware(datetime.datetime.strptime(event_date_str, "%Y-%m-%d"))
 
         event = Calendar.objects.create(
             title=title,

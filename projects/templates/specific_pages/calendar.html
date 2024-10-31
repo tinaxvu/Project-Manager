@@ -100,6 +100,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridMonth',
         height: 'auto',
+        timeZone: 'UTC',
         headerToolbar: {
             left: 'prev,next today',
             center: 'title',
