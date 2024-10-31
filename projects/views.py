@@ -1,13 +1,15 @@
 from django.contrib.auth import get_user_model
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
+from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
+from django.utils import timezone
+import json
 
-from .models import Project
+from .models import Project, Calendar
 from .forms import ProjectForm, FileUploadForm
 from .utils import get_signed_url
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.http import JsonResponse
 
 
 
@@ -63,7 +65,7 @@ def project_detail(request, project_id):
     else:
         return render(request, 'specific_pages/request_to_join.html', {'project': project})
 
-
+############ Joining Project ############
 @login_required
 def request_to_join(request, project_id):
     project = get_object_or_404(Project, id=project_id)
@@ -76,40 +78,75 @@ def request_to_join(request, project_id):
     else:
         return JsonResponse({'success': False, 'message': 'Already requested'})
 
-
-def approve_request(request, project_id, user_id):
-    User = get_user_model()
-    project = get_object_or_404(Project, id=project_id)
-    user = get_object_or_404(User, id=user_id)
-
-    if request.user == project.created_by:
-        user.requested_projects.remove(project)
-        project.members.add(user)
-    return redirect('projects:project-detail', project_id=project_id)
-
-
-def deny_request(request, project_id, user_id):
-    User = get_user_model()
-    project = get_object_or_404(Project, id=project_id)
-    user = get_object_or_404(User, id=user_id)
-
-    if request.user == project.created_by:
-        user.requested_projects.remove(project)
-        project.denied.add(user)
-
-    return redirect('projects:project-detail', project_id=project_id)
-
-
 @login_required
-def calendar_view(request):
-    return render(request, 'specific_pages/calendar.html')
+def cancel_request(request, project_id):
+    project = get_object_or_404(Project, id=project_id)
+    user = request.user
+    if user in user.projects_requested_by_users.all():
+        project.requested.remove(user)
+        return JsonResponse({'success': True, 'action': 'canceled'})
+    return redirect('projects:project-detail', project_id=project_id)
+
+############ Calendar ############
+@login_required
+def calendar_view(request, project_id):
+    project = get_object_or_404(Project, id=project_id)
+    return render(request, 'specific_pages/calendar.html', {'project': project})
+
+
+def fetch_events(request, project_id):
+    print("Fetching events...")  # Debug print statement
+    project = get_object_or_404(Project, id=project_id)
+    events = Calendar.objects.filter(project=project)
+    events_data = [
+        {
+            "id": event.id,
+            "title": event.title,
+            "start": event.event_date.isoformat(),
+            "description": event.description
+        }
+        for event in events
+    ]
+    return JsonResponse(events_data, safe=False)
+
+
+@csrf_exempt
+def add_event(request, project_id):
+    print("Adding event...")  # Debug print statement
+    project = get_object_or_404(Project, id=project_id)
+    if request.method == "POST":
+        data = json.loads(request.body)
+        title = data.get("title")
+        description = data.get("description")
+        event_date = data.get("date")
+
+        event = Calendar.objects.create(
+            title=title,
+            description=description,
+            event_date=event_date,
+            created_by=request.user,
+            project=project
+        )
+        return JsonResponse({"id": event.id})
+
+
+
+@csrf_exempt
+def delete_event(request, event_id):
+    if request.method == "DELETE":
+        event = get_object_or_404(Calendar, id=event_id)
+        if event.created_by == request.user:
+            event.delete()
+            return JsonResponse({"success": True})
+        else:
+            return JsonResponse({"success": False, "error": "Permission denied."})
 
 
 @login_required
 def team_handbook_view(request):
     return render(request, 'specific_pages/team_handbook.html')
 
-
+############ Collaboration ############
 @login_required
 def collaboration_view(request, project_id):
     project = get_object_or_404(Project, id=project_id)
@@ -117,6 +154,37 @@ def collaboration_view(request, project_id):
         return render(request, 'specific_pages/collaboration.html', {'project': project})
     else:
         return redirect('projects:project-detail', project_id=project.id)
+
+@login_required
+def approve_request(request, project_id, user_id):
+    User = get_user_model()
+    project = get_object_or_404(Project, id=project_id)
+    user = get_object_or_404(User, id=user_id)
+
+    # Check if the current user is the project creator
+    if request.user == project.created_by:
+        # Ensure user is in the requested list before approving
+        if user in project.requested.all():
+            project.requested.remove(user)  # Remove from requested
+            project.members.add(user)       # Add to members
+
+    # Refresh the page
+    return redirect('projects:collaboration', project_id=project_id)
+
+@login_required
+def deny_request(request, project_id, user_id):
+    User = get_user_model()
+    project = get_object_or_404(Project, id=project_id)
+    user = get_object_or_404(User, id=user_id)
+
+    # Check if the current user is the project creator
+    if request.user == project.created_by:
+        # Ensure user is in the requested list before denying
+        if user in project.requested.all():
+            project.requested.remove(user)  # Remove from requested list
+
+    # Refresh the page
+    return redirect('projects:collaboration', project_id=project_id)
 
 
 @login_required
