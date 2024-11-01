@@ -1,28 +1,74 @@
+{% extends 'base.html' %}
+
+{% block title %}Files for {{ project.name }}{% endblock %}
+
 {% block content %}
 <h2>Files for {{ project.name }}</h2>
 
+<!-- File Upload Form -->
 <form method="POST" action="{% url 'projects:project_files' project.id %}" enctype="multipart/form-data">
     {% csrf_token %}
     <label for="file">Select file:</label>
     <input type="file" name="file" id="file" required>
+
+    <!-- Metadata Fields -->
+    <div>
+        <ul>
+            <li>
+                <label for="file_title">File Title:</label>
+                <input type="text" name="file_title" id="file_title" required>
+            </li>
+            <li>
+                <label for="description">Description:</label>
+                <textarea name="description" id="description" required></textarea>
+            </li>
+            <li>
+                <label for="keywords">Keywords (comma-separated):</label>
+                <input type="text" name="keywords" id="keywords">
+            </li>
+        </ul>
+    </div>
     <button type="submit">Upload</button>
 </form>
 
+<!-- Tag Filter Interface -->
+<h3>Filter by Tags</h3>
+<form method="GET" action="{% url 'projects:project_files' project.id %}">
+    {% csrf_token %}
+    <div>
+        {% for tag in tags %}
+            <label>
+                <input type="checkbox" name="tags" value="{{ tag.name }}" {% if tag.name in selected_tags %}checked{% endif %}>
+                {{ tag.name }}
+            </label>
+        {% endfor %}
+    </div>
+    <button type="submit">Filter</button>
+</form>
+
+<!-- List of Uploaded Files with Metadata -->
 <h3>Uploaded Files</h3>
 <ul>
-  {% for file, url in files.items %}
+    {% for file, url in files.items %}
     <li>
-      <a href="{{ url }}">{{ file.file.name }}</a> - Uploaded by {{ file.uploaded_by }}
+        <a href="{% url 'projects:view_file' project.id file.id %}">{{ file.file.name }}</a> - Uploaded by {{ file.uploaded_by }}
 
-      {% if user.permission_level == 'admin' %}
+        <ul>
+            <li><strong>Title:</strong> {{ file.file_title }}</li>
+            <li><strong>Description:</strong> {{ file.description }}</li>
+            <li><strong>Keywords:</strong> {{ file.keywords }}</li>
+            <li><strong>Uploaded on:</strong> {{ file.upload_date|date:"F j, Y, g:i a" }}</li>
+        </ul>
+
+        {% if user.permission_level == 'admin' %}
         <form method="POST" action="{% url 'projects:delete-file' project.id file.id %}" style="display:inline;">
-          {% csrf_token %}
-          <button type="submit" onclick="return confirm('Are you sure you want to delete this file?');">Delete</button>
+            {% csrf_token %}
+            <button type="submit" onclick="return confirm('Are you sure you want to delete this file?');">Delete</button>
         </form>
-      {% endif %}
+        {% endif %}
     </li>
-  {% empty %}
+    {% empty %}
     <li>No files uploaded yet.</li>
-  {% endfor %}
+    {% endfor %}
 </ul>
 {% endblock %}
