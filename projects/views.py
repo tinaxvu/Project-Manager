@@ -70,10 +70,12 @@ def view_file(request, project_id, file_id):
     bucket_name = settings.AWS_STORAGE_BUCKET_NAME
     file_key = file_upload.file.name  # This is the path to the file in S3
 
-    # Get the text file content
-    file_obj = s3.get_object(Bucket=bucket_name, Key=file_key)
-    file_content = file_obj['Body'].read().decode('utf-8')  # Decode as utf-8 text
-
+    # Get the text file content if it is a txt file
+    if '.txt' in file_key:
+      file_obj = s3.get_object(Bucket=bucket_name, Key=file_key)
+      file_content = file_obj['Body'].read().decode('utf-8')  # Decode as utf-8 text
+    else: 
+        file_content = ''
     context = {
         'project': project,
         'file': file_upload,
