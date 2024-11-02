@@ -4,15 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Request to Join {{ project.name }}</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.3/css/all.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #007bff 0%, #00bfff 50%, #007bff 100%);
+            color: #fff;
+        }
+        .btn {
+            border-radius: 20px;
+        }
+    </style>
 </head>
-<body>
-    <h1>Request to Join {{ project.name }}</h1>
+<body class="container" style="min-height: 100vh;">
+    <div class="mt-5">
+        <a href="{% url 'projects:project-detail' project.id %}" class="btn btn-light mb-3"><i class="fas fa-arrow-left"></i> Back to Project</a>
+        <h1>Request to Join {{ project.name }}</h1>
+    </div>
 
     {% if user.is_authenticated %}
         <p>You are not a member of this project yet.</p>
         <form method="post" action="{% url 'projects:request-to-join' project.id %}">
             {% csrf_token %}
-            <button type="submit">Request to Join</button>
+            <button type="submit" class="btn btn-primary">Request to Join</button>
         </form>
     {% else %}
         <p>You need to be logged in to request to join this project.</p>
