@@ -1,12 +1,93 @@
-<!-- landing/templates/landing/calendar.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Timeline</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #007bff 0%, #00bfff 50%, #007bff 100%);
+            color: #fff;
+            min-height: 100vh;
+        }
+        .card {
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        .card:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-5px);
+        }
+        .btn-custom {
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+        .btn-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+    </style>
 </head>
 <body>
-    <h1>Timeline</h1>
+    <div class="container">
+        <h1>Timeline</h1>
+       
+        <!-- Button to trigger modal -->
+        <button type="button" class="btn btn-sm btn-light" data-bs-toggle="modal" data-bs-target="#addEventModal">
+            <i class="fas fa-plus"></i> Add New Event
+        </button>
+        <!-- Modal -->
+        <div class="modal fade" id="addEventModal" tabindex="-1" aria-labelledby="addEventModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title text-dark" id="addEventModalLabel">Add New Event</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Form to add new event -->
+                        <form method="post" action="/projects/{{project_id}}/timeline/">
+                            {% csrf_token %}
+                            <div class="mb-2">
+                                <label for="event" class="form-label text-dark">Event</label>
+                                <input type="text" class="form-control" id="event" name="event" placeholder="Enter event" required>
+                            </div>
+                            <div class="mb-2">
+                                <label for="date" class="form-label text-dark">Date</label>
+                                <input type="date" class="form-control" id="date" name="date" placeholder="Select date" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Add Event</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mt-3">
+            {% for event in events %}
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h3 class="card-title text-white">{{ event.event }}</h3>
+                        <p class="card-text text-white">Date: {{ event.date }}</p>
+                    </div>
+                    <div class="card-footer bg-transparent border-top-0 d-flex justify-content-between align-items-center">
+                    <a href="{% url 'projects:delete-event' project_id=project_id event_id=event.id %}" class="btn btn-outline-danger btn-sm">
+                        <i class="fas fa-trash-alt me-2"></i>Delete
+                    </a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12">
+                <p class="text-center text-white">No events in the timeline.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
 </body>
 </html>
