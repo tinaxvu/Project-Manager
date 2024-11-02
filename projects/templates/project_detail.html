@@ -8,9 +8,11 @@
     {% load bootstrap5 %}
     {% bootstrap_css %}
 
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.3/css/all.css">
     <style>
         body {
-            background-color: #1a4b7a;
+            background: linear-gradient(135deg, #007bff 0%, #00bfff 50%, #007bff 100%);
+            color: #fff;
         }
         .dashboard-grid {
             display: grid;
@@ -25,16 +27,11 @@
             border-radius: 20px;
             color: white;
             position: relative;
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2); /* Added border to make it more glassy */
         }
-        .dashboard-item.pink {
-            background-color: #f68fb0;
-        }
-        .dashboard-item.blue {
-            background-color: #6cc5e0;
-        }
-        .dashboard-item.white-pink {
-            background-color: white;
-            color: #99044e;
+        .dashboard-item:hover {
+            background-color: rgba(255, 255, 255, 0.2);
         }
         .dashboard-item a {
             position: absolute;
@@ -63,6 +60,7 @@
             border-radius: 5px;
             text-decoration: none;
             font-weight: bold;
+            border-radius: 20px;
         }
         .back-to-homepage:hover {
             background-color: #cc005f;
@@ -75,48 +73,48 @@
         <h1 class="text-center text-white mt-5">Dashboard</h1>
         <div class="dashboard-grid mt-5">
             <!-- Project Name -->
-            <div class="dashboard-item white-pink text-center h-100">
+            <div class="dashboard-item text-center h-100">
                 <h2>{{ project.name }}</h2>
             </div>
 
             <!-- Team Handbook -->
-            <div class="dashboard-item pink text-center h-100">
+            <div class="dashboard-item text-center h-100">
                 <h2>Team Handbook</h2>
                 <a href="{% url 'projects:team-handbook' %}">&#10132;</a>
             </div>
 
             <!-- Calendar -->
-            <div class="dashboard-item pink text-center h-100">
+            <div class="dashboard-item text-center h-100">
                 <h2>Calendar</h2>
-                <a href="{% url 'projects:calendar' %}">&#10132;</a>
+                <a href="/projects/{{project.id}}/calendar/">&#10132;</a>
             </div>
 
             <!-- Collaboration -->
-            <div class="dashboard-item blue text-center h-100">
+            <div class="dashboard-item text-center h-100">
                 <h2>Collaboration</h2>
                 <a href="{% url 'projects:collaboration' project.id %}">&#10132;</a>
             </div>
 
             <!-- To-do's -->
-            <div class="dashboard-item blue text-center h-100">
+            <div class="dashboard-item text-center h-100">
                 <h2>To-do's</h2>
-                <a href="{% url 'projects:todos' %}">&#10132;</a>
+                <a href="/projects/todos/{{project.id}}/">&#10132;</a>
             </div>
 
             <!-- Timeline -->
-            <div class="dashboard-item blue text-center h-100">
+            <div class="dashboard-item text-center h-100">
                 <h2>Timeline</h2>
-                <a href="{% url 'projects:timeline' %}">&#10132;</a>
+                <a href="/projects/{{project.id}}/timeline/">&#10132;</a>
             </div>
 
             <!-- Files -->
-            <div class="dashboard-item pink text-center h-100">
+            <div class="dashboard-item text-center h-100">
                 <h2>Files</h2>
                 <a href="{% url 'projects:project_files' project.id %}">&#10132;</a>
             </div>
 
             <!-- Schedule Meets -->
-            <div class="dashboard-item pink text-center h-100">
+            <div class="dashboard-item text-center h-100">
                 <h2>Schedule Meets</h2>
                 <a href="{% url 'projects:schedule-meets' %}">&#10132;</a>
             </div>
