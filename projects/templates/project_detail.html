@@ -1,135 +1,129 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Project Management Dashboard</title>
+{% extends 'base.html' %}
 
-    {% load bootstrap5 %}
-    {% bootstrap_css %}
+{% block title %}Project Management Dashboard{% endblock %}
 
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.3/css/all.css">
-    <style>
-        body {
-            background: linear-gradient(135deg, #007bff 0%, #00bfff 50%, #007bff 100%);
-            color: #fff;
-        }
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            grid-gap: 20px;
-            padding: 50px;
-        }
-        .dashboard-item {
-            padding: 40px;
-            text-align: center;
-            font-size: 1.5rem;
-            border-radius: 20px;
-            color: white;
-            position: relative;
-            background-color: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2); /* Added border to make it more glassy */
-        }
-        .dashboard-item:hover {
-            background-color: rgba(255, 255, 255, 0.2);
-        }
-        .dashboard-item a {
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
-            color: white;
-            font-size: 2rem;
-        }
-        .dashboard-item img {
-            max-width: 100px;
-            margin-bottom: 20px;
-        }
-        h2 {
-            margin-bottom: 20px;
-            font-weight: bold;
-        }
+{% block content %}
+<style>
+    body {
+        background: linear-gradient(135deg, #007bff 0%, #00bfff 50%, #007bff 100%);
+        color: #fff;
+    }
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-gap: 20px;
+        padding: 50px;
+    }
+    .dashboard-item {
+        padding: 40px;
+        text-align: center;
+        font-size: 1.5rem;
+        border-radius: 20px;
+        color: white;
+        position: relative;
+        background-color: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .dashboard-item:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+    }
+    .dashboard-item a {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        color: white;
+        font-size: 2rem;
+    }
+    .dashboard-item img {
+        max-width: 100px;
+        margin-bottom: 20px;
+    }
+    .dashboard-item.pink {
+        background-color: #f68fb0;
+    }
+    .dashboard-item.blue {
+        background-color: #6cc5e0;
+    }
+    .dashboard-item.white-pink {
+        background-color: white;
+        color: #99044e;
+    }
+    h2 {
+        margin-bottom: 20px;
+        font-weight: bold;
+    }
+    .back-to-homepage {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background-color: #ff007f;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 20px;
+        text-decoration: none;
+        font-weight: bold;
+    }
+    .back-to-homepage:hover {
+        background-color: #cc005f;
+    }
+</style>
 
-        /* Back to Homepage Button */
-        .back-to-homepage {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background-color: #ff007f;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 5px;
-            text-decoration: none;
-            font-weight: bold;
-            border-radius: 20px;
-        }
-        .back-to-homepage:hover {
-            background-color: #cc005f;
-        }
-    </style>
-</head>
-<body>
-    {% if user.is_authenticated %}
-    <div class="container my-5">
-        <h1 class="text-center text-white mt-5">Dashboard</h1>
-        <div class="dashboard-grid mt-5">
-            <!-- Project Name -->
-            <div class="dashboard-item text-center h-100">
-                <h2>{{ project.name }}</h2>
-            </div>
+{% if user.is_authenticated %}
+<div class="container my-5">
+    <h1 class="text-center text-white mt-5">Dashboard</h1>
+    <div class="dashboard-grid mt-5">
+        <!-- Project Name -->
+        <div class="dashboard-item white-pink text-center h-100">
+            <h2>{{ project.name }}</h2>
+        </div>
 
-            <!-- Team Handbook -->
-            <div class="dashboard-item text-center h-100">
-                <h2>Team Handbook</h2>
-                <a href="{% url 'projects:team-handbook' %}">&#10132;</a>
-            </div>
+        <!-- Team Handbook -->
+        <div class="dashboard-item pink text-center h-100">
+            <h2>Team Handbook</h2>
+            <a href="{% url 'projects:team-handbook' %}">&#10132;</a>
+        </div>
 
-            <!-- Calendar -->
-            <div class="dashboard-item text-center h-100">
-                <h2>Calendar</h2>
-                <a href="/projects/{{project.id}}/calendar/">&#10132;</a>
-            </div>
+        <!-- Calendar -->
+        <div class="dashboard-item pink text-center h-100">
+            <h2>Calendar</h2>
+            <a href="{% url 'projects:calendar' project.id %}">&#10132;</a>
+        </div>
 
-            <!-- Collaboration -->
-            <div class="dashboard-item text-center h-100">
-                <h2>Collaboration</h2>
-                <a href="{% url 'projects:collaboration' project.id %}">&#10132;</a>
-            </div>
+        <!-- Collaboration -->
+        <div class="dashboard-item blue text-center h-100">
+            <h2>Collaboration</h2>
+            <a href="{% url 'projects:collaboration' project.id %}">&#10132;</a>
+        </div>
 
-            <!-- To-do's -->
-            <div class="dashboard-item text-center h-100">
-                <h2>To-do's</h2>
-                <a href="/projects/todos/{{project.id}}/">&#10132;</a>
-            </div>
+        <!-- To-do's -->
+        <div class="dashboard-item blue text-center h-100">
+            <h2>To-do's</h2>
+            <a href="{% url 'projects:todos' project.id %}">&#10132;</a>
+        </div>
 
-            <!-- Timeline -->
-            <div class="dashboard-item text-center h-100">
-                <h2>Timeline</h2>
-                <a href="/projects/{{project.id}}/timeline/">&#10132;</a>
-            </div>
+        <!-- Timeline -->
+        <div class="dashboard-item blue text-center h-100">
+            <h2>Timeline</h2>
+            <a href="{% url 'projects:timeline' project.id %}">&#10132;</a>
+        </div>
 
-            <!-- Files -->
-            <div class="dashboard-item text-center h-100">
-                <h2>Files</h2>
-                <a href="{% url 'projects:project_files' project.id %}">&#10132;</a>
-            </div>
+        <!-- Files -->
+        <div class="dashboard-item pink text-center h-100">
+            <h2>Files</h2>
+            <a href="{% url 'projects:project_files' project.id %}">&#10132;</a>
+        </div>
 
-            <!-- Schedule Meets -->
-            <div class="dashboard-item text-center h-100">
-                <h2>Schedule Meets</h2>
-                <a href="{% url 'projects:schedule-meets' %}">&#10132;</a>
-            </div>
+        <!-- Schedule Meets -->
+        <div class="dashboard-item pink text-center h-100">
+            <h2>Schedule Meets</h2>
+            <a href="{% url 'projects:schedule-meets' %}">&#10132;</a>
         </div>
     </div>
+</div>
 
-    <!-- Back to Homepage -->
-    <a href="/" class="back-to-homepage">Back to Homepage</a>
-
-    {% else %}
-    <div class="container">
-        <h1>You don't have permission to view this project</h1>
-    </div>
-    {% endif %}
-
-    {% bootstrap_javascript %}
-</body>
-</html>
+{% else %}
+<div class="container">
+    <h1>You don't have permission to view this project</h1>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,3 +1,8 @@
+{% extends 'base.html' %}
+
+{% block title %}Collaboration for {{ project.name }}{% endblock %}
+
+{% block content %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,7 +15,6 @@
         body {
             background: linear-gradient(135deg, #007bff 0%, #00bfff 50%, #007bff 100%);
             color: #fff;
-            
         }
         .list-group-item {
             background-color: rgba(255, 255, 255, 0.1);
@@ -51,6 +55,6 @@
             <li class="list-group-item">{{ member.username }}</li>
         {% endfor %}
     </ul>
-
 </body>
 </html>
+{% endblock %}
