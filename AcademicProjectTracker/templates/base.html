@@ -7,6 +7,32 @@
 
    {% load bootstrap5 %}
    {% bootstrap_css %}
+
+   <!-- Custom Styles -->
+   <style>
+       body {
+           background: linear-gradient(135deg, #007bff 0%, #00bfff 50%, #007bff 100%);
+           color: #fff;
+           min-height: 100vh;
+       }
+       .card {
+           background-color: rgba(255, 255, 255, 0.1);
+           border: 1px solid rgba(255, 255, 255, 0.2);
+           transition: all 0.3s ease;
+       }
+       .card:hover {
+           background-color: rgba(255, 255, 255, 0.2);
+           transform: translateY(-5px);
+       }
+       .btn-custom {
+           border-radius: 20px;
+           transition: all 0.3s ease;
+       }
+       .btn-custom:hover {
+           transform: translateY(-2px);
+           box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+       }
+   </style>
 </head>
 <body>
    {% if user.is_authenticated %}
@@ -82,7 +108,7 @@
        </div>
 
    {% else %}
-       <!-- Blank screen for non-authenticated users with login prompt -->
+       <!-- Screen for non-authenticated users with login prompt -->
        <div class="container text-center mt-5">
            <h2>You are not logged in</h2>
            <a href="{% url 'social:begin' 'google-oauth2' %}" class="btn btn-primary mt-3">Login with Google</a>
