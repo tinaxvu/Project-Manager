@@ -17,6 +17,7 @@ jobs:
       issues: write
     env: 
       AWS_STORAGE_BUCKET_NAME: b-19-cs3240
+
     steps:
       - name: checkout repo
         uses: actions/checkout@v3
@@ -34,12 +35,17 @@ jobs:
       - name: Set AWS Credentials
         uses: aws-actions/configure-aws-credentials@v3
         with:
-          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-2 # Set your AWS region here
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-2
+
+      - name: Print Environment Variables
+        run: |
+          echo "AWS_STORAGE_BUCKET_NAME: $AWS_STORAGE_BUCKET_NAME"
+          echo "AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION"
 
       - name: Sync to S3
-        run: aws s3 sync . s3://b-19-cs3240 # Change this to your bucket name    
+        run: aws s3 sync . s3://$AWS_STORAGE_BUCKET_NAME    
 
       - name: set up database
         run: python manage.py migrate
