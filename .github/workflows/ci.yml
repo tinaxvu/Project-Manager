@@ -8,17 +8,14 @@ on:
     branches:
       - main
   workflow_dispatch:
-permissions:
-      id-token: write   # This is required for requesting the JWT
-      contents: read  
+
 jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
       contents: read
       issues: write
-    env: 
-      AWS_STORAGE_BUCKET_NAME: b-19-cs3240
+      id-token: write  # Needed for GitHub OIDC authentication (optional unless required for later steps)
 
     steps:
       - name: checkout repo
