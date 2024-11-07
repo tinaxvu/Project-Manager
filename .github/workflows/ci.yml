@@ -35,12 +35,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Print AWS environment variables
-        run: |
-          echo "AWS_ACCESS_KEY_ID is set: [${{ secrets.AWS_ACCESS_KEY_ID }}]"
-          echo "AWS_SECRET_ACCESS_KEY is set: [${{ secrets.AWS_SECRET_ACCESS_KEY }}]"
-          echo "AWS_DEFAULT_REGION is: $AWS_DEFAULT_REGION"
-
       - name: Set AWS Credentials
         uses: aws-actions/configure-aws-credentials@v3
         with:
