@@ -15,8 +15,7 @@ jobs:
     permissions:
       contents: read
       issues: write
-      id-token: write  # Needed for GitHub OIDC authentication (optional unless required for later steps)
-
+      id-token: write
     steps:
       - name: checkout repo
         uses: actions/checkout@v3
