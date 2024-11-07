@@ -39,7 +39,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-secret-access-key: ZF6MUDCt7XI2DXtTAMCBqSxrV3wC6FpwLERlNRoh
           aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
 
       - name: Sync to S3
