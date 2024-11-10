@@ -245,8 +245,32 @@ def files_view(request, project_id):
 
 
 @login_required
-def schedule_meets_view(request):
-    return render(request, 'specific_pages//schedule_meets.html')
+def schedule_meets_view(request, project_id):
+    project = get_object_or_404(Project, id=project_id)
+    schedule_meets = ScheduleMeet.objects.filter(project=project)
+    return render(request, 'specific_pages/schedule_meets.html', {'project': project, 'schedule_meets': project.schedule_meets.all()})
+
+@login_required
+def make_meets(request, project_id):
+    project = get_object_or_404(Project, id=project_id)
+
+    if request.method == 'POST':
+        start_time = request.POST.get('start_time')
+        end_time = request.POST.get('end_time')
+        description = request.POST.get('description')
+        title = request.POST.get('title')
+        meeting_date = request.POST.get('meeting_date')
+        location = request.POST.get('location')
+        partipants = request.POST.getlist('participants')
+
+        meeting = ScheduleMeet(project=project, start_time=start_time, end_time=end_time, description=description, title=title, meeting_date=meeting_date, location=location, partipants=partipants)
+        meeting.save()
+            
+        return redirect('projects:schedule-meets', project_id=project_id)
+
+    schedule_meets = ScheduleMeet.objects.filter(project=project)
+
+    return render(request, 'projects/schedule_meets.html', {'project': project, 'schedule_meets': schedule_meets, 'project_id': project_id})
 
 
 @require_POST
