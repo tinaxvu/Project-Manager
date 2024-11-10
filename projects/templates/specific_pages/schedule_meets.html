@@ -1,7 +1,105 @@
 {% extends 'base.html' %}
 
-{% block title %}Calendar{% endblock %}
+{% block title %}Schedule Meets{% endblock %}
 
 {% block content %}
-    <h1>Schedule Meets</h1>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schedule Meetings</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            color: #333;
+        }
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="datetime-local"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .meetings-list {
+            margin-top: 20px;
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .meeting {
+            border-bottom: 1px solid #ccc;
+            padding: 10px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Schedule Meetings for {{ project.name }}</h1>
+
+    <form method="POST" action="{% url 'projects:make-meets' project_id=project.id %}">
+        {% csrf_token %}
+        <label for="title">Meeting Title:</label>
+        <input type="text" id="title" name="title" required>
+
+        <label for="start_time">Meeting Time:</label>
+        <input type="time" id="start_time" name="start_time" required> 
+
+        <label for="end_time">Meeting Time:</label>
+        <input type="time" id="end_time" name="end_time" required>
+
+        <label for="meeting_date">Meeting Date:</label>
+        <input type="date" id="date" name="meeting_date" required>
+
+        <label for="description">Description:</label>
+        <textarea id="description" name="description" rows="4"></textarea> 
+
+        <button type="submit">Schedule Meeting</button>
+    </form>
+
+    <div class="meetings-list">
+        <h2>Scheduled Meetings</h2>
+        {% for meeting in schedule_meets %}
+            <div class="meeting">
+                <h3>{{ meeting.title }}</h3>
+                <p><strong>Date:</strong> {{ meeting.meeting_date }}</p>
+                <p><strong>Description:</strong> {{ meeting.description }}</p>
+            </div>
+        {% empty %}
+            <p>No meetings scheduled yet.</p>
+        {% endfor %}
+    </div>
+
+</body>
+</html>
+
 {% endblock %}

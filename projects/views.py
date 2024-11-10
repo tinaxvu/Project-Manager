@@ -260,10 +260,8 @@ def make_meets(request, project_id):
         description = request.POST.get('description')
         title = request.POST.get('title')
         meeting_date = request.POST.get('meeting_date')
-        location = request.POST.get('location')
-        partipants = request.POST.getlist('participants')
 
-        meeting = ScheduleMeet(project=project, start_time=start_time, end_time=end_time, description=description, title=title, meeting_date=meeting_date, location=location, partipants=partipants)
+        meeting = ScheduleMeet(project=project, start_time=start_time, end_time=end_time, description=description, title=title, meeting_date=meeting_date)
         meeting.save()
             
         return redirect('projects:schedule-meets', project_id=project_id)
