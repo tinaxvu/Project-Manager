@@ -7,6 +7,68 @@
 
    {% load bootstrap5 %}
    {% bootstrap_css %}
+   <style>
+    body {
+        background-color: #1a4b7a;
+        color:white
+    }
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-gap: 20px;
+        padding: 20px;
+    }
+    .dashboard-item {
+        padding: 20px;
+        text-align: center;
+        font-size: 1.2rem;
+        border-radius: 15px;
+        position: relative;
+        color: white;
+        min-height: 100px;
+    }
+    .dashboard-item.pink {
+        background-color: #f68fb0;
+    }
+    .dashboard-item.blue {
+        background-color: #6cc5e0;
+    }
+    .dashboard-item.white-pink {
+        background-color: white;
+        color: #99044e;
+    }
+    .dashboard-item a {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        color: white;
+        font-size: 1.5rem;
+        text-decoration: none;
+    }
+    .delete-project-btn {
+        position: absolute;
+        top: 10px;
+        right: 50px;
+        display: inline-block;
+        width: 30px;
+        height: 30px;
+    }
+    .create-project-btn {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background-color: #ff007f;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 5px;
+        text-decoration: none;
+        font-weight: bold;
+    }
+    .create-project-btn:hover {
+        background-color: #cc005f;
+    }
+</style>
+
 </head>
 <body>
    {% if user.is_authenticated %}
@@ -83,9 +145,22 @@
 
    {% else %}
        <!-- Blank screen for non-authenticated users with login prompt -->
-       <div class="container text-center mt-5">
-           <h2>You are not logged in</h2>
-           <a href="{% url 'social:begin' 'google-oauth2' %}" class="btn btn-primary mt-3">Login with Google</a>
+       <div class="container text-center mt-5 text-white">
+          <h1>Welcome to the PMA</h1>
+          <h2>Log in to create and join projects</h2>
+          <a href="{% url 'social:begin' 'google-oauth2' %}" class="btn btn-primary mt-3">Login with Google</a>
+          <h1 class="mt-5">Available Projects</h1>
+          <div class="dashboard-grid">
+            {% for project in all_projects %}
+            <div class="dashboard-item pink">
+                <h2>{{ project.name }}</h2>
+                <p>{{ project.description }}</p>
+                <p>Owner: {{ project.created_by}}</p>
+            </div>
+            {% empty %}
+            <p class="text-center text-white">No other projects available.</p>
+            {% endfor %}
+        </div>
        </div>
    {% endif %}
 
