@@ -26,4 +26,8 @@ def landing_page(request):
 
         return render(request, 'landing/index.html', context)
     else:
-        return render(request, 'landing/index.html')
+        all_projects = Project.objects.all()
+        context = { 
+            'all_projects': all_projects
+        }
+        return render(request, 'landing/index.html', context)

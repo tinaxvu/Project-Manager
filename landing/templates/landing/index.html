@@ -129,7 +129,7 @@
                <div class="dashboard-item pink">
                    <h2>{{ project.name }}</h2>
                    <p>{{ project.description }}</p>
-
+                   <p>{{project.owner}}</p>
                    {% if project not in user_projects and project not in joined_projects %}
                        <!-- Check if the user has already requested to join -->
                        {% if project in requested_projects %}
