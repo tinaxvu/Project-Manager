@@ -18,6 +18,7 @@ urlpatterns = [
     path('<int:project_id>/approve-request/<int:user_id>/', views.approve_request, name='approve-request'),
     path('<int:project_id>/deny-request/<int:user_id>/', views.deny_request, name='deny-request'),
     path('<int:project_id>/collaboration/', views.collaboration_view, name='collaboration'),
-    path('<int:project_id>/delete/', views.delete_project, name='delete-project'),
+    path('<int:project_id>/delete/', views.delete_project, name='delete_project'),
     path('<int:project_id>/file/<int:file_id>/', views.view_file, name='view_file'),
+    path('<int:project_id>/leave-project', views.leave_project, name="leave_project")
 ]
