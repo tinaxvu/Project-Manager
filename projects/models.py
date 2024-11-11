@@ -103,8 +103,8 @@ class ScheduleMeet(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField(blank=True, null=True)
     meeting_date = models.DateTimeField(default=timezone.now)
-    start_time = models.DateTimeField(default=timezone.now)
-    end_time = models.DateTimeField(default=timezone.now)
+    start_time = models.TimeField(default=timezone.now)
+    end_time = models.TimeField(default=timezone.now)
     #location = models.CharField(max_length=100, blank=True, null=True)
     #participants = models.ManyToManyField('users.User', related_name="meetings_attending", blank=True)
 

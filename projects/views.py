@@ -248,7 +248,7 @@ def files_view(request, project_id):
 def schedule_meets_view(request, project_id):
     project = get_object_or_404(Project, id=project_id)
     schedule_meets = ScheduleMeet.objects.filter(project=project)
-    return render(request, 'specific_pages/schedule_meets.html', {'project': project, 'schedule_meets': project.schedule_meets.all()})
+    return render(request, 'specific_pages/schedule_meets.html', {'project': project, 'schedule_meets': schedule_meets})
 
 @login_required
 def make_meets(request, project_id):
