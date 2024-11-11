@@ -4,6 +4,11 @@
 
 {% block content %}
     <div class="container mt-5">
+        <!-- Back to To-Do List Button -->
+        <a href="{% url 'projects:todos' project_id=todo.project.id %}" class="btn btn-light mb-3" style="border-radius: 20px;">
+            <i class="fas fa-arrow-left"></i> Back to To-Do List
+        </a>
+
         <div class="card h-100 mt-5">
             <div class="card-body">
                 <h3 class="card-title">{{ todo.description }}</h3>
