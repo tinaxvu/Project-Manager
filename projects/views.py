@@ -207,7 +207,7 @@ def todos_view(request, project_id):
         for user_id in assigned_to:
             user = get_object_or_404(User, id=user_id)
             todo.assigned_to.add(user)
-        return redirect('/')
+        return redirect('projects:todos', project_id=project_id)
 
     users = User.objects.all()
     todos = Todo.objects.filter(project=project_id)
@@ -293,7 +293,7 @@ def delete_project(request, project_id):
 
     if request.user.permission_level == 'admin' or project.owner == request.user:
         project.delete()
-        return JsonResponse({'success': True})
+        return redirect('/')
 
     return JsonResponse({'success': False, 'error': 'You do not have permission to delete this project.'}, status=403)
 
@@ -315,7 +315,7 @@ def delete_project(request, project_id):
     project = get_object_or_404(Project, id=project_id)
 
     project.delete()
-    return JsonResponse({'success': True})
+    return redirect('/')
 
 
 
