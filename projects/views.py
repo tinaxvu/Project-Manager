@@ -247,8 +247,15 @@ def files_view(request, project_id):
 @login_required
 def schedule_meets_view(request, project_id):
     project = get_object_or_404(Project, id=project_id)
+
     schedule_meets = ScheduleMeet.objects.filter(project=project)
-    return render(request, 'specific_pages/schedule_meets.html', {'project': project, 'schedule_meets': schedule_meets})
+    return render(request, 'specific_pages/schedule_meets.html', {'project': project, 'schedule_meets': schedule_meets, 'project_id': project_id})
+
+@login_required
+def delete_meet(request, project_id, meeting_id):
+    meet = get_object_or_404(ScheduleMeet, id=meeting_id)
+    meet.delete()
+    return redirect('projects:schedule-meets', project_id=project_id)
 
 @login_required
 def make_meets(request, project_id):
@@ -260,6 +267,14 @@ def make_meets(request, project_id):
         description = request.POST.get('description')
         title = request.POST.get('title')
         meeting_date = request.POST.get('meeting_date')
+
+        if not (title and start_time and end_time and meeting_date):
+            messages.error(request, "All fields are required.")
+            return redirect('projects:schedule-meets', project_id=project_id)
+
+        if start_time >= end_time:
+            messages.error(request, "Start time must be before end time.")
+            return redirect('projects:schedule-meets', project_id=project_id)
 
         meeting = ScheduleMeet(project=project, start_time=start_time, end_time=end_time, description=description, title=title, meeting_date=meeting_date)
         meeting.save()
