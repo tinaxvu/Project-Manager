@@ -26,9 +26,9 @@
 
     /* Modal styling */
     .modal {
-        display: none;  /* Ensure modal is hidden by default */
+        display: none;
         position: fixed;
-        z-index: 1;
+        z-index: 1000;
         left: 0;
         top: 0;
         width: 100%;
@@ -36,16 +36,29 @@
         background-color: rgba(0, 0, 0, 0.5);
         align-items: center;
         justify-content: center;
+        overflow: auto;
     }
 
     .modal-content {
         background-color: white;
         padding: 20px;
         border-radius: 10px;
-        width: 300px;
-        max-width: 90%;
+        width: 90%;
+        max-width: 400px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         text-align: left;
+        max-height: 90vh;
+        overflow-y: auto;
+        z-index: 1010;
+    }
+    .modal-content input,
+    .modal-content textarea,
+    .modal-content select {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 8px;
+        margin-top: 5px;
+        margin-bottom: 10px;
     }
 
     .close {
@@ -75,21 +88,52 @@
         <span class="close" id="closeModalBtn">&times;</span>
         <h2>Add Event</h2>
         <form id="addEventForm">
-            <label for="title">Title:</label>
-            <input type="text" id="title" name="title" required>
+            <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                <label for="title">Title:</label>
+                <input type="text" id="title" name="title" required>
+            </div>
 
-            <label for="description">Description:</label>
-            <textarea id="description" name="description"></textarea>
+            <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                <label for="description">Description:</label>
+                <textarea id="description" name="description"></textarea>
+            </div>
 
-            <label for="date">Date:</label>
-            <input type="date" id="date" name="date" required>
+            <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                <label for="date">Date:</label>
+                <input type="date" id="date" name="date" required>
+            </div>
+
+            <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                <label for="time">Time:</label>
+                <input type="time" id="time" name="time" required>
+            </div>
+
+            <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                <label for="type">Event Type:</label>
+                <select id="type" name="type" required>
+                    <option value="meeting" style="color: blue;">Meeting</option>
+                    <option value="due-date" style="color: red;">Due Date</option>
+                    <option value="milestone" style="color: green;">Milestone</option>
+                    <option value="reminder" style="color: purple;">Reminder</option>
+                </select>
+            </div>
 
             <button type="submit">Create Event</button>
         </form>
     </div>
 </div>
 
-<!-- Include FullCalendar JS and CSS -->
+<!-- Event Details Modal -->
+<div id="eventDetailsModal" class="modal">
+    <div class="modal-content">
+        <span class="close" id="closeEventDetailsBtn">&times;</span>
+        <h2 id="eventTitle"></h2>
+        <p id="eventDescription"></p>
+        <p><strong>Date:</strong> <span id="eventDate"></span></p>
+        <p><strong>Type:</strong> <span id="eventType"></span></p>
+    </div>
+</div>
+
 <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
 
@@ -101,19 +145,54 @@ document.addEventListener('DOMContentLoaded', function() {
         initialView: 'dayGridMonth',
         height: 'auto',
         timeZone: 'UTC',
+        displayEventTime: true,
         headerToolbar: {
             left: 'prev,next today',
             center: 'title',
             right: 'dayGridMonth,timeGridWeek,timeGridDay'
         },
-        events: "/projects/{{ project.id }}/fetch_events/"  // URL to fetch events
+        events: "/projects/{{ project.id }}/fetch_events/",
+        eventClick: function(info) {
+             const eventDate = new Date(info.event.start).toLocaleString('en-US', {
+                timeZone: 'UTC',
+                dateStyle: 'full',
+                timeStyle: 'short'
+            });
+
+            document.getElementById('eventTitle').textContent = info.event.title;
+            document.getElementById('eventDescription').textContent = info.event.extendedProps.description;
+            document.getElementById('eventDate').textContent = info.event.start.toLocaleString();
+            document.getElementById('eventType').textContent = info.event.extendedProps.type;
+
+            document.getElementById('eventDetailsModal').style.display = 'flex';
+        },
+        eventDidMount: function(info) {
+            // Set color based on event type
+            switch (info.event.extendedProps.type) {
+                case 'meeting':
+                    info.el.style.backgroundColor = 'blue';
+                    break;
+                case 'due-date':
+                    info.el.style.backgroundColor = 'red';
+                    break;
+                case 'milestone':
+                    info.el.style.backgroundColor = 'green';
+                    break;
+                case 'reminder':
+                    info.el.style.backgroundColor = 'purple';
+                    break;
+            }
+            info.el.style.color = "white";
+        }
     });
     calendar.render();
 
-    // Modal controls
+    // Modal controls for adding and viewing events
     const modal = document.getElementById('eventModal');
     const openModalBtn = document.getElementById('openModalBtn');
     const closeModalBtn = document.getElementById('closeModalBtn');
+    const eventDetailsModal = document.getElementById('eventDetailsModal');
+    const closeEventDetailsBtn = document.getElementById('closeEventDetailsBtn');
 
     openModalBtn.onclick = function() {
         modal.style.display = "flex";
@@ -123,9 +202,16 @@ document.addEventListener('DOMContentLoaded', function() {
         modal.style.display = "none";
     }
 
+    closeEventDetailsBtn.onclick = function() {
+        eventDetailsModal.style.display = "none";
+    }
+
     window.onclick = function(event) {
         if (event.target == modal) {
             modal.style.display = "none";
+        }
+        if (event.target == eventDetailsModal) {
+            eventDetailsModal.style.display = "none";
         }
     }
 
@@ -136,23 +222,25 @@ document.addEventListener('DOMContentLoaded', function() {
         const title = document.getElementById('title').value;
         const description = document.getElementById('description').value;
         const date = document.getElementById('date').value;
+        const time = document.getElementById('time').value;
+        const type = document.getElementById('type').value;
 
-        fetch(`/projects/{{ project.id }}/add_event/`, {  // Update this URL
+        const datetime = `${date}T${time}:00`;
+
+
+        fetch(`/projects/{{ project.id }}/add_event/`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 "X-CSRFToken": "{{ csrf_token }}"
             },
-            body: JSON.stringify({ title, description, date })
+            body: JSON.stringify({ title, description, date: datetime, type })
         })
         .then(response => response.json())
         .then(data => {
             if (data.id) {
-                // Hide modal and reset form
-                document.getElementById('eventModal').style.display = "none";
+                modal.style.display = "none";
                 document.getElementById('addEventForm').reset();
-
-                // Refresh calendar to show new event
                 calendar.refetchEvents();
             } else {
                 alert("Error adding event. Please try again.");
