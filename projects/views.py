@@ -96,7 +96,6 @@ def calendar_view(request, project_id):
 
 
 def fetch_events(request, project_id):
-    print("Fetching events...")  # Debug print statement
     project = get_object_or_404(Project, id=project_id)
     events = Calendar.objects.filter(project=project)
     events_data = [
@@ -104,6 +103,7 @@ def fetch_events(request, project_id):
             "id": event.id,
             "title": event.title,
             "start": event.event_date.isoformat(),
+            "end": event.end_date.isoformat() if event.end_date else None,
             "description": event.description,
             "type": event.type
         }
@@ -118,18 +118,21 @@ def add_event(request, project_id):
         data = json.loads(request.body)
         title = data.get("title")
         description = data.get("description")
-        event_date_str = data.get("date")
+        start_date_str = data.get("start_date")
+        end_date_str = data.get("end_date")
         type = data.get("type")
 
-        if not title or not event_date_str:
+        if not title or not start_date_str or not end_date_str:
             return JsonResponse({"success": False, "error": "Title and date are required."}, status=400)
 
-        event_date = timezone.make_aware(datetime.datetime.fromisoformat(event_date_str), timezone.utc)
+        start_date = timezone.make_aware(datetime.datetime.fromisoformat(start_date_str), timezone.utc)
+        end_date = timezone.make_aware(datetime.datetime.fromisoformat(end_date_str), timezone.utc)
 
         event = Calendar.objects.create(
             title=title,
             description=description,
-            event_date=event_date,
+            event_date=start_date,
+            end_date=end_date,
             created_by=request.user,
             project=project,
             type=type

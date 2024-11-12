@@ -40,6 +40,7 @@ class Calendar(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True, null=True)
     event_date = models.DateTimeField()
+    end_date = models.DateTimeField()    # Add this for end date
     created_by = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name="created_calendar_events")
     type = models.CharField(max_length=50)
 

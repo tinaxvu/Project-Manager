@@ -10,6 +10,7 @@ urlpatterns = [
     path('<int:project_id>/calendar/', views.calendar_view, name='calendar'),
     path('<int:project_id>/fetch_events/', views.fetch_events, name='fetch_events'),
     path('<int:project_id>/add_event/', views.add_event, name='add_event'),
+    path('delete_event/<int:event_id>/', views.delete_event, name='delete_event'),
 
     path('team-handbook/', views.team_handbook_view, name='team-handbook'),
     path('collaboration/', views.collaboration_view, name='collaboration'),

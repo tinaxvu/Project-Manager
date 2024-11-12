@@ -23,6 +23,16 @@
         font-weight: bold;
         cursor: pointer;
     }
+    /* Delete button styling */
+    .delete-event-btn {
+        background-color: #ff4c4c; /* Red color */
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        font-weight: bold;
+        cursor: pointer;
+    }
 
     /* Modal styling */
     .modal {
@@ -104,8 +114,13 @@
             </div>
 
             <div style="display: flex; align-items: center; margin-bottom: 10px;">
-                <label for="time">Time:</label>
-                <input type="time" id="time" name="time" required>
+                <label for="startTime">Start Time:</label>
+                <input type="time" id="startTime" name="startTime" required>
+            </div>
+
+            <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                <label for="endTime">End Time:</label>
+                <input type="time" id="endTime" name="endTime" required>
             </div>
 
             <div style="display: flex; align-items: center; margin-bottom: 10px;">
@@ -130,7 +145,10 @@
         <h2 id="eventTitle"></h2>
         <p id="eventDescription"></p>
         <p><strong>Date:</strong> <span id="eventDate"></span></p>
+        <p><strong>Start Time:</strong> <span id="eventStartTime"></span></p>
+        <p><strong>End Time:</strong> <span id="eventEndTime"></span></p>
         <p><strong>Type:</strong> <span id="eventType"></span></p>
+        <button id="deleteEventBtn" class="delete-event-btn">Delete Event</button>
     </div>
 </div>
 
@@ -153,18 +171,41 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         events: "/projects/{{ project.id }}/fetch_events/",
         eventClick: function(info) {
-             const eventDate = new Date(info.event.start).toLocaleString('en-US', {
+             const eventDate = new Date(info.event.start).toLocaleDateString('en-US', {
                 timeZone: 'UTC',
-                dateStyle: 'full',
-                timeStyle: 'short'
+                dateStyle: 'full'
             });
+
+            // Format start and end times separately
+            const startTime = info.event.start
+                ? new Date(info.event.start).toLocaleTimeString('en-US', {
+                    timeZone: 'UTC',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                })
+                : 'N/A';
+
+            const endTime = info.event.end
+                ? new Date(info.event.end).toLocaleTimeString('en-US', {
+                    timeZone: 'UTC',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                })
+                : 'N/A';
 
             document.getElementById('eventTitle').textContent = info.event.title;
             document.getElementById('eventDescription').textContent = info.event.extendedProps.description;
-            document.getElementById('eventDate').textContent = info.event.start.toLocaleString();
+            document.getElementById('eventDate').textContent = eventDate;
+            document.getElementById('eventStartTime').textContent = startTime;
+            document.getElementById('eventEndTime').textContent = endTime;
             document.getElementById('eventType').textContent = info.event.extendedProps.type;
 
             document.getElementById('eventDetailsModal').style.display = 'flex';
+
+            const deleteButton = document.getElementById('deleteEventBtn');
+            deleteButton.onclick = function() {
+                deleteEvent(info.event.id);  // Call the delete function with the event ID
+            };
         },
         eventDidMount: function(info) {
             // Set color based on event type
@@ -186,6 +227,25 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     calendar.render();
+
+    function deleteEvent(eventId) {
+        fetch(`/projects/delete_event/${eventId}/`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": "{{ csrf_token }}"
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('eventDetailsModal').style.display = 'none';  // Hide the modal
+                calendar.refetchEvents();  // Refresh the calendar to reflect deletion
+            } else {
+                alert("Error deleting event: " + (data.error || "Please try again."));
+            }
+        });
+    }
 
     // Modal controls for adding and viewing events
     const modal = document.getElementById('eventModal');
@@ -222,11 +282,12 @@ document.addEventListener('DOMContentLoaded', function() {
         const title = document.getElementById('title').value;
         const description = document.getElementById('description').value;
         const date = document.getElementById('date').value;
-        const time = document.getElementById('time').value;
+        const startTime = document.getElementById('startTime').value;
+        const endTime = document.getElementById('endTime').value;
         const type = document.getElementById('type').value;
 
-        const datetime = `${date}T${time}:00`;
-
+        const startDateTime = `${date}T${startTime}:00`;
+        const endDateTime = `${date}T${endTime}:00`;
 
         fetch(`/projects/{{ project.id }}/add_event/`, {
             method: "POST",
@@ -234,7 +295,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 "Content-Type": "application/json",
                 "X-CSRFToken": "{{ csrf_token }}"
             },
-            body: JSON.stringify({ title, description, date: datetime, type })
+            body: JSON.stringify({ title, description, start_date: startDateTime, end_date: endDateTime, type })
         })
         .then(response => response.json())
         .then(data => {
