@@ -18,8 +18,8 @@
 }
 
 .btn-outline-light:hover {
-    background-color: white; 
-    color: #333; 
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white; 
 }
 
 .delete-button {
@@ -92,7 +92,7 @@
     }
 </style>
 <body>
-    <a href="{% url 'landing_page' %}" class="back-button">
+    <a href="{% url 'projects:project-detail' project_id %}" class="back-button">
         <i class="fas fa-arrow-left"></i>
     </a>
 
