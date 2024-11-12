@@ -38,7 +38,7 @@ jobs:
           aws-region: us-east-2
 
       - name: Sync to S3
-        run: aws s3 sync . s3://${{ secrets.AWS_STORAGE_BUCKET_NAME }}
+        run: aws s3 sync . s3://b-19-cs3240
 
       - name: set up database
         run: python manage.py migrate
