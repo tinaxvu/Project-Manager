@@ -3,6 +3,10 @@
 {% block title %}To-Do's{% endblock %}
 
 {% block content %}
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+
     <div class="container mt-5">
         <a href="{% url 'projects:project-detail' project_id %}" class="btn btn-light mb-3" style="border-radius: 20px;">
             <i class="fas fa-arrow-left"></i> Back to Project
