@@ -4,7 +4,9 @@
 
 {% block content %}
 
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.3/css/all.css">
+
 
 <style>
     /* Calendar */
@@ -13,6 +15,10 @@
         margin: auto;
         padding: 20px;
         background-color: white;
+    }
+
+    .calendar-title {
+        color: white;
     }
 
     .back-btn-fixed {
@@ -109,6 +115,10 @@
         cursor: pointer;
     }
 </style>
+
+<div class="container text-center mt-4">
+    <h1 class="calendar-title">Calendar</h1>
+</div>
 
 <div id="calendar"></div>
 
