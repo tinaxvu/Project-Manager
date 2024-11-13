@@ -1,38 +1,37 @@
 {% extends 'base.html' %}
 
-{% block title %}Collaboration for {{ project.name }}{% endblock %}
+{% block title %}Collaboration{% endblock %}
 
 {% block content %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Collaboration</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.3/css/all.css">
-    <style>
-        body {
-            background: linear-gradient(135deg, #007bff 0%, #00bfff 50%, #007bff 100%);
-            color: #fff;
-        }
-        .list-group-item {
-            background-color: rgba(255, 255, 255, 0.1);
-            border: none;
-        }
-        .list-group-item:hover {
-            background-color: rgba(255, 255, 255, 0.2);
-        }
-        .btn {
-            border-radius: 20px;
-        }
-    </style>
-</head>
-<body class="container" style="min-height: 100vh;">
-    <div class="mt-5">
-        <a href="{% url 'projects:project-detail' project.id %}" class="btn btn-light mb-3"><i class="fas fa-arrow-left"></i> Back to Project</a>
-        <h1>Collaboration for {{ project.name }}</h1>
-    </div>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.3/css/all.css">
+
+<style>
+    body {
+        background: linear-gradient(135deg, #007bff 0%, #00bfff 50%, #007bff 100%);
+        color: #fff;
+    }
+    .list-group-item {
+        background-color: rgba(255, 255, 255, 0.1);
+        border: none;
+    }
+    .list-group-item:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+    }
+    .btn {
+        border-radius: 20px;
+    }
+
+    .back-btn-fixed {
+        position: fixed;
+        bottom: 30px;
+        left: 30px;
+        border-radius: 20px;
+    }
+</style>
+
+<div class="container" style="min-height: 100vh; padding-top: 20px;">
+    <h1>Collaboration</h1>
 
     <h2 class="mt-5">Requests to Join</h2>
     <ul class="list-group">
@@ -55,6 +54,10 @@
             <li class="list-group-item">{{ member.username }}</li>
         {% endfor %}
     </ul>
-</body>
-</html>
+</div>
+
+<a href="{% url 'projects:project-detail' project.id %}" class="btn btn-light back-btn-fixed">
+    <i class="fas fa-arrow-left"></i> Back to Project
+</a>
+
 {% endblock %}
