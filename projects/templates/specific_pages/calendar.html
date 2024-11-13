@@ -9,6 +9,7 @@
         max-width: 800px;
         margin: auto;
         padding: 20px;
+        background-color: white;
     }
 
     /* Button styling */
@@ -60,7 +61,19 @@
         max-height: 90vh;
         overflow-y: auto;
         z-index: 1010;
+        color: black;
+
     }
+
+     .modal-content input,
+    .modal-content textarea,
+    .modal-content select,
+    .modal-content label,
+    .modal-content h2 {
+        color: black;
+    }
+
+
     .modal-content input,
     .modal-content textarea,
     .modal-content select {
@@ -123,6 +136,9 @@
                 <input type="time" id="endTime" name="endTime" required>
             </div>
 
+            <div id="timeError" style="color: red; display: none; margin-bottom: 10px;">Invalid: End time cannot be before start time.</div>
+
+
             <div style="display: flex; align-items: center; margin-bottom: 10px;">
                 <label for="type">Event Type:</label>
                 <select id="type" name="type" required>
@@ -156,6 +172,8 @@
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
 
 <script>
+
+
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize the calendar with FullCalendar
     const calendarEl = document.getElementById('calendar');

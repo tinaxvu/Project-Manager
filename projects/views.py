@@ -11,6 +11,10 @@ from .models import FileUpload
 from django.conf import settings
 import boto3
 import os
+import json
+import datetime
+
+
 User = get_user_model()
 
 @login_required
@@ -191,6 +195,7 @@ def add_event(request, project_id):
 
         start_date = timezone.make_aware(datetime.datetime.fromisoformat(start_date_str), timezone.utc)
         end_date = timezone.make_aware(datetime.datetime.fromisoformat(end_date_str), timezone.utc)
+
 
         event = Calendar.objects.create(
             title=title,
