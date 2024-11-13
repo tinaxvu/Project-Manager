@@ -6,7 +6,6 @@ app_name = 'projects'
 urlpatterns = [
     path('create/', views.create_project, name='create-project'),
     path('<int:project_id>/', views.project_detail, name='project-detail'),
-    path('<int:project_id>/calendar/', views.calendar_view, name='calendar'),
     path('team-handbook/', views.team_handbook_view, name='team-handbook'),
     path('collaboration/', views.collaboration_view, name='collaboration'),
     path('todos/<int:project_id>/', views.todos_view, name='todos'),
@@ -26,6 +25,9 @@ urlpatterns = [
     path('toggle-complete/<int:todo_id>/', views.toggle_todo_complete, name='toggle-complete'),
     path('<int:project_id>/delete/', views.delete_project, name='delete-project'),
     path('<int:project_id>/delete-todo/<int:todo_id>/', views.delete_todo, name='delete-todo'),
-    path('<int:project_id>/delete-calendar/<int:calendar_id>/', views.delete_calendar, name='delete-calendar'),
-    path('<int:project_id>/delete-event/<int:event_id>/', views.delete_event, name='delete-event'),
+    path('<int:project_id>/calendar/', views.calendar_view, name='calendar'),
+    path('<int:project_id>/fetch_events/', views.fetch_events, name='fetch_events'),
+    path('<int:project_id>/add_event/', views.add_event, name='add_event'),
+    path('delete_event/<int:event_id>/', views.delete_event, name='delete_event'),
+
 ]

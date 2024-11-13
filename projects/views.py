@@ -152,23 +152,66 @@ def deny_request(request, project_id, user_id):
 from django.contrib import messages
 from .models import Calendar
 
+############ Calendar ############
 @login_required
 def calendar_view(request, project_id):
     project = get_object_or_404(Project, id=project_id)
-    if request.method == 'POST':
-        title = request.POST.get('title')
-        description = request.POST.get('description')
-        event_date = request.POST.get('event_date')
-        created_by = request.user
-        
-        if title and description and event_date:
-            event = Calendar(title=title, description=description, event_date=event_date, project=project, created_by=created_by)
-            event.save()
-            messages.success(request, 'Event added successfully!')
-        else:
-            messages.error(request, 'Please fill in all fields.')
+    return render(request, 'specific_pages/calendar.html', {'project': project})
+
+
+def fetch_events(request, project_id):
+    project = get_object_or_404(Project, id=project_id)
     events = Calendar.objects.filter(project=project)
-    return render(request, 'specific_pages/calendar.html', {'events': events, 'project_id': project_id})
+    events_data = [
+        {
+            "id": event.id,
+            "title": event.title,
+            "start": event.event_date.isoformat(),
+            "end": event.end_date.isoformat() if event.end_date else None,
+            "description": event.description,
+            "type": event.type
+        }
+        for event in events
+    ]
+    return JsonResponse(events_data, safe=False)
+
+
+def add_event(request, project_id):
+    project = get_object_or_404(Project, id=project_id)
+    if request.method == "POST":
+        data = json.loads(request.body)
+        title = data.get("title")
+        description = data.get("description")
+        start_date_str = data.get("start_date")
+        end_date_str = data.get("end_date")
+        type = data.get("type")
+
+        if not title or not start_date_str or not end_date_str:
+            return JsonResponse({"success": False, "error": "Title and date are required."}, status=400)
+
+        start_date = timezone.make_aware(datetime.datetime.fromisoformat(start_date_str), timezone.utc)
+        end_date = timezone.make_aware(datetime.datetime.fromisoformat(end_date_str), timezone.utc)
+
+        event = Calendar.objects.create(
+            title=title,
+            description=description,
+            event_date=start_date,
+            end_date=end_date,
+            created_by=request.user,
+            project=project,
+            type=type
+        )
+        return JsonResponse({"id": event.id})
+
+
+def delete_event(request, event_id):
+    if request.method == "DELETE":
+        event = get_object_or_404(Calendar, id=event_id)
+        if event.created_by == request.user:
+            event.delete()
+            return JsonResponse({"success": True})
+        else:
+            return JsonResponse({"success": False, "error": "Permission denied."})
 
 @login_required
 def team_handbook_view(request):
@@ -329,23 +372,9 @@ def delete_todo(request, project_id, todo_id):
     return redirect('projects:todos', project_id=project_id)
     
 
-@login_required
-def delete_calendar(request, project_id, calendar_id):
-    
-    calendar_to_delete = get_object_or_404(Calendar, id=calendar_id)
 
-    calendar_to_delete.delete()
-    return redirect('projects:calendar', project_id=project_id)
     
 
 
-@login_required
-def delete_event(request, project_id, event_id):
-    
-    event_to_delete = get_object_or_404(Timeline, id=event_id)
-
-    
-    event_to_delete.delete()
-    return redirect('projects:timeline', project_id=project_id)
     
 
