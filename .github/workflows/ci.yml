@@ -7,46 +7,51 @@ on:
     pull_request:
         branches:
             - main
-
+    workflow_dispatch:
 jobs:
-    build:
-        runs-on: ubuntu-latest
-        permissions:
-          contents: read
-          issues: write
-        env: 
-          AWS_STORAGE_BUCKET_NAME: b-19-cs3240
-        steps:
-            - name: checkout repo
-              uses: actions/checkout@v3
+  build:
+      runs-on: ubuntu-latest
+      permissions:
+        id-token: write
+        contents: read
+        issues: write
+      steps:
+        - name: checkout repo
+          uses: actions/checkout@v3
 
-            - name: set up python
-              uses: actions/setup-python@v4
-              with:
-                python-version: '3.11'
+        - name: set up python
+          uses: actions/setup-python@v4
+          with:
+            python-version: '3.11'
 
-            - name: install dependencies
-              run: |
-                python -m pip install --upgrade pip
-                pip install -r requirements.txt
-            - name: Print AWS environment variables
-              run: |
-                echo "AWS_ACCESS_KEY_ID is set: [${{ secrets.AWS_ACCESS_KEY_ID }}]"
-                echo "AWS_SECRET_ACCESS_KEY is set: [${{ secrets.AWS_SECRET_ACCESS_KEY }}]"
-                echo "AWS_DEFAULT_REGION is: $AWS_DEFAULT_REGION"
+        - name: install dependencies
+          run: |
+            python -m pip install --upgrade pip
+            pip install -r requirements.txt
 
-            - name: Set AWS Credentials
-              uses: aws-actions/configure-aws-credentials@v3
-              with:
-                aws-access-key-id: AKIAYHJANAKFS6AIMBF7
-                aws-secret-access-key: Y4h37ChMiT5E2QBr0GcOfwND+fBqQJ5VVQvZ0ORx
-                aws-region: us-east-2 # Set your AWS region here
+        - name: Check for DEBUG=True in production code
+          run: |
+            if grep -q "DEBUG *= *True" your_project/settings.py; then
+              echo "Error: DEBUG=True found in production settings."
+              exit 1
+            else
+              echo "No DEBUG=True in production settings."
+            fi
 
-            - name: Sync to S3
-              run: aws s3 sync . s3://b-19-cs3240 # Change this to your bucket name    
+        - name: Set AWS Credentials
+          uses: aws-actions/configure-aws-credentials@v4
+          with:
+            aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+            aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            aws-region: us-east-2
 
-            - name: set up database
-              run: python manage.py migrate
+        - name: Sync to S3
+          run: aws s3 sync . s3://$S3_BUCKET_NAME/
+          env:
+            S3_BUCKET_NAME: ${{ secrets.AWS_STORAGE_BUCKET_NAME }}
 
-            - name: run django tests
-              run: python manage.py test
+        - name: set up database
+          run: python manage.py migrate
+
+        - name: run django tests
+          run: python manage.py test
