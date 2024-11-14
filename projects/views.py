@@ -122,6 +122,13 @@ def request_to_join(request, project_id):
     else:
         return JsonResponse({'success': False, 'message': 'Already requested'})
 
+@login_required
+def leave_project(request, project_id,):
+    user = request.user
+    project = get_object_or_404(Project, id=project_id)
+    project.members.remove(user)
+    project.requested.remove(user)
+    return redirect('landing_page')
 
 @login_required
 def approve_request(request, project_id, user_id):
@@ -186,7 +193,7 @@ def files_view(request, project_id):
 
 @login_required
 def schedule_meets_view(request):
-    return render(request, 'specific_pages//schedule_meets.html')
+    return render(request, 'specific_pages/schedule_meets.html')
 
 
 @require_POST
@@ -196,7 +203,7 @@ def delete_project(request, project_id):
 
     if request.user.permission_level == 'admin' or project.owner == request.user:
         project.delete()
-        return JsonResponse({'success': True})
+        return redirect('landing_page')
 
     return JsonResponse({'success': False, 'error': 'You do not have permission to delete this project.'}, status=403)
 
