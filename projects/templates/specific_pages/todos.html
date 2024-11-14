@@ -23,6 +23,17 @@
             color: white;
         }
 
+        .btn-view-custom {
+            border: 1px solid black;
+            color: black;
+        }
+
+        .btn-view-custom:hover {
+            background-color: white; /* White background on hover */
+            color: black; /* Keep text color black */
+            transition: background-color 0.3s ease; /* Smooth transition effect */
+        }
+
 </style>
     <div class="container mt-5">
         <a href="{% url 'projects:project-detail' project_id %}" class="btn btn-light back-btn-fixed">
@@ -95,15 +106,12 @@
                         <p class="card-text">Priority: {{ todo.priority }}</p>
                     </div>
                     <div class="card-footer bg-transparent border-top-0 d-flex justify-content-between align-items-center">
-                        <a href="{% url 'projects:todo-detail' todo_id=todo.id %}" class="btn btn-outline-light btn-sm btn-custom">
+                        <a href="{% url 'projects:todo-detail' todo_id=todo.id %}" class="btn btn-view-custom btn-sm">
                             <i class="fas fa-eye me-2"></i>View
                         </a>
-                        <a href="{% url 'projects:delete-todo' project_id=todo.project.id todo_id=todo.id %}" class="btn btn-outline-danger btn-sm btn-custom delete-todo-btn">
-                            <i class="fas fa-trash-alt me-2"></i>Delete
-                        </a>
-                        <button class="btn btn-outline-success btn-sm btn-custom toggle-complete-btn" data-todo-id="{{ todo.id }}">
+                         <a href="{% url 'projects:toggle_todo_complete' todo_id=todo.id %}" class="btn btn-outline-success btn-sm btn-custom toggle-complete-btn">
                             <i class="fas fa-check-circle me-2"></i>{{ todo.is_finished|yesno:"Complete,Incomplete" }}
-                        </button>
+                        </a>
                     </div>
                 </div>
             </div>

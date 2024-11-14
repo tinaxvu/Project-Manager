@@ -270,6 +270,12 @@ def toggle_todo_complete(request, todo_id):
     todo = get_object_or_404(Todo, id=todo_id)
     todo.is_finished = not todo.is_finished
     todo.save()
+    return redirect('projects:todos', project_id=todo.project.id)
+
+def toggle_todo_complete_detail(request, todo_id):
+    todo = get_object_or_404(Todo, id=todo_id)
+    todo.is_finished = not todo.is_finished
+    todo.save()
     return redirect('projects:todo-detail', todo_id=todo.id)
 
 
