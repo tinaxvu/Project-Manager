@@ -10,6 +10,8 @@ on:
     workflow_dispatch:
 jobs:
   build:
+      env:
+        SECRET_KEY: ${{ secrets.SECRET_KEY }}
       runs-on: ubuntu-latest
       permissions:
         id-token: write
