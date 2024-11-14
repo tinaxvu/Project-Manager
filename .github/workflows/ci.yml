@@ -31,7 +31,7 @@ jobs:
 
         - name: Check for DEBUG=True in production code
           run: |
-            if grep -q "DEBUG *= *True" your_project/settings.py; then
+            if grep -q "DEBUG *= *True" AcademicProjectTracker/settings.py; then
               echo "Error: DEBUG=True found in production settings."
               exit 1
             else
