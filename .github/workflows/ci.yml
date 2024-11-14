@@ -12,6 +12,8 @@ jobs:
   build:
       env:
         SECRET_KEY: ${{ secrets.SECRET_KEY }}
+        SOCIAL_AUTH_GOOGLE_OAUTH2_KEY: ${{ secrets.SOCIAL_AUTH_GOOGLE_OAUTH2_KEY }}
+        SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET: ${{ secrets.SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET }}
       runs-on: ubuntu-latest
       permissions:
         id-token: write
