@@ -14,22 +14,56 @@
         .btn {
             border-radius: 20px;
         }
+        .btn-requested {
+            background-color: #6c757d; /* Gray out the button */
+            color: #fff;
+            pointer-events: none; /* Make button unclickable */
+        }
     </style>
 </head>
 <body class="container" style="min-height: 100vh;">
     <div class="mt-5">
-        <a href="{% url 'projects:project-detail' project.id %}" class="btn btn-light mb-3"><i class="fas fa-arrow-left"></i> Back to Project</a>
+        <a href="{% url 'projects:project-detail' project_id=project.id %}" class="btn btn-light mb-3">
+            <i class="fas fa-arrow-left"></i> Back to Project
+        </a>
         <h1>Request to Join {{ project.name }}</h1>
     </div>
 
     {% if user.is_authenticated %}
         <p>You are not a member of this project yet.</p>
-        <form method="post" action="{% url 'projects:request-to-join' project.id %}">
+        <form id="requestForm">
             {% csrf_token %}
-            <button type="submit" class="btn btn-primary">Request to Join</button>
+            <button id="requestButton" type="button" class="btn btn-primary" onclick="requestToJoin({{ project.id }})">
+                Request to Join
+            </button>
         </form>
     {% else %}
         <p>You need to be logged in to request to join this project.</p>
     {% endif %}
+
+    <script>
+        function requestToJoin(projectId) {
+            fetch(`/projects/request-to-join/${project_id}/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.requested) {
+                    // Change the button text to "Requested!" and gray it out
+                    const requestButton = document.getElementById('requestButton');
+                    requestButton.textContent = 'Requested!';
+                    requestButton.classList.remove('btn-primary');
+                    requestButton.classList.add('btn-requested');
+                } else {
+                    alert(data.message || 'Request failed. Please try again.');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
 </body>
 </html>

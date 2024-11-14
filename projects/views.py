@@ -133,7 +133,7 @@ def project_detail(request, project_id):
     elif project.members.filter(id=request.user.id).exists():
         return render(request, 'project_detail.html', {'project': project})
     else:
-        return render(request, 'specific_pages/request_to_join.html', {'project': project})
+        return render(request, 'request_to_join.html', {'project': project})
 
 
 @login_required
@@ -143,9 +143,9 @@ def request_to_join(request, project_id):
 
     if project not in user.projects_requested_by_users.all():
         project.requested.add(user)
-        return JsonResponse({'success': True})
+        return JsonResponse({'success': True, 'requested': True})
     else:
-        return JsonResponse({'success': False, 'message': 'Already requested'})
+        return JsonResponse({'success': False, 'requested': True, 'message': 'Already requested'})
 
 
 @login_required

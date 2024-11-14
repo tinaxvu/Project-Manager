@@ -6,7 +6,7 @@ app_name = 'projects'
 urlpatterns = [
     path('create/', views.create_project, name='create-project'),
     path('<int:project_id>/delete/', views.delete_project, name='delete-project'),
-    path('<int:project_id>/leave-project', views.leave_project, name="leave_project")
+    path('<int:project_id>/leave-project', views.leave_project, name="leave_project"),
 
     path('<int:project_id>/', views.project_detail, name='project-detail'),
 
@@ -23,7 +23,7 @@ urlpatterns = [
     path('<int:project_id>/file/<int:file_id>/', views.view_file, name='view_file'),
     path('<int:project_id>/files/delete/<int:file_id>/', views.delete_file, name='delete-file'),
 
-    path('<int:project_id>/request-to-join/', views.request_to_join, name='request-to-join'),
+    path('<int:project_id>/request-to-join/<int:user_id>/', views.request_to_join, name='request-to-join'),
     path('<int:project_id>/approve-request/<int:user_id>/', views.approve_request, name='approve-request'),
     path('<int:project_id>/deny-request/<int:user_id>/', views.deny_request, name='deny-request'),
 
@@ -38,5 +38,4 @@ urlpatterns = [
     path('<int:project_id>/fetch_events/', views.fetch_events, name='fetch_events'),
     path('<int:project_id>/add_event/', views.add_event, name='add_event'),
     path('delete_event/<int:event_id>/', views.delete_event, name='delete_event'),
-
 ]
