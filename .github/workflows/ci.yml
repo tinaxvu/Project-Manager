@@ -29,15 +29,6 @@ jobs:
             python -m pip install --upgrade pip
             pip install -r requirements.txt
 
-        - name: Check for DEBUG=True in production code
-          run: |
-            if grep -q "DEBUG *= *True" AcademicProjectTracker/settings.py; then
-              echo "Error: DEBUG=True found in production settings."
-              exit 1
-            else
-              echo "No DEBUG=True in production settings."
-            fi
-
         - name: Set AWS Credentials
           uses: aws-actions/configure-aws-credentials@v4
           with:
@@ -55,3 +46,12 @@ jobs:
 
         - name: run django tests
           run: python manage.py test
+
+        - name: Check for DEBUG=True in production code
+          run: |
+            if grep -q "DEBUG *= *True" AcademicProjectTracker/settings.py; then
+              echo "Error: DEBUG=True found in production settings."
+              exit 1
+            else
+              echo "No DEBUG=True in production settings."
+            fi
