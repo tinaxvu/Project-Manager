@@ -9,7 +9,6 @@ urlpatterns = [
     path('team-handbook/', views.team_handbook_view, name='team-handbook'),
     path('collaboration/', views.collaboration_view, name='collaboration'),
     path('todos/<int:project_id>/', views.todos_view, name='todos'),
-    path('<int:project_id>/timeline/', views.timeline_view, name='timeline'),
     path('<int:project_id>/schedule-meets/', views.schedule_meets_view, name='schedule-meets'),
     path('<int:project_id>/schedule-meets/add/', views.make_meets, name='make-meets'),
     path('<int:project_id>/schedule-meets/delete/<int:meeting_id>/', views.delete_meet, name='delete-meet'),

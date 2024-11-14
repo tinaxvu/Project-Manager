@@ -14,8 +14,8 @@ import os
 import json
 import datetime
 
-
 User = get_user_model()
+
 
 @login_required
 def project_files(request, project_id):
@@ -62,24 +62,25 @@ def project_files(request, project_id):
     }
     return render(request, 'specific_pages/files.html', context)
 
-@login_required 
+
+@login_required
 def view_file(request, project_id, file_id):
     project = get_object_or_404(Project, id=project_id)
-    file_upload = get_object_or_404(FileUpload, id=file_id,project=project)
-    
+    file_upload = get_object_or_404(FileUpload, id=file_id, project=project)
+
     # Get the signed URL for displaying the file (so that the file is securely accessed from AWS)
     file_url = get_signed_url(file_upload)
     # If file is hosted on AWS S3
-    s3 = boto3.client('s3',aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-    aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,region_name=settings.AWS_S3_REGION_NAME)
+    s3 = boto3.client('s3', aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+                      aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY, region_name=settings.AWS_S3_REGION_NAME)
     bucket_name = settings.AWS_STORAGE_BUCKET_NAME
     file_key = file_upload.file.name  # This is the path to the file in S3
 
     # Get the text file content if it is a txt file
     if '.txt' in file_key:
-      file_obj = s3.get_object(Bucket=bucket_name, Key=file_key)
-      file_content = file_obj['Body'].read().decode('utf-8')  # Decode as utf-8 text
-    else: 
+        file_obj = s3.get_object(Bucket=bucket_name, Key=file_key)
+        file_content = file_obj['Body'].read().decode('utf-8')  # Decode as utf-8 text
+    else:
         file_content = ''
     context = {
         'project': project,
@@ -88,6 +89,25 @@ def view_file(request, project_id, file_id):
         'file_content': file_content
     }
     return render(request, 'specific_pages/file.html', context)
+
+
+@login_required
+def delete_file(request, project_id, file_id):
+    project = get_object_or_404(Project, id=project_id)
+    file_to_delete = get_object_or_404(project.files.all(), id=file_id)
+
+    if request.user.permission_level == 'admin':
+        file_to_delete.delete()
+        return redirect('projects:project_files', project_id=project_id)
+    else:
+        return redirect('projects:project-detail', project_id=project_id)
+
+
+@login_required
+def files_view(request, project_id):
+    project = get_object_or_404(Project, id=project_id)
+    return render(request, 'specific_pages/files.html', {'project': project})
+
 
 @login_required
 def create_project(request):
@@ -156,6 +176,7 @@ def deny_request(request, project_id, user_id):
 from django.contrib import messages
 from .models import Calendar
 
+
 ############ Calendar ############
 @login_required
 def calendar_view(request, project_id):
@@ -196,7 +217,6 @@ def add_event(request, project_id):
         start_date = timezone.make_aware(datetime.datetime.fromisoformat(start_date_str), timezone.utc)
         end_date = timezone.make_aware(datetime.datetime.fromisoformat(end_date_str), timezone.utc)
 
-
         event = Calendar.objects.create(
             title=title,
             description=description,
@@ -217,6 +237,7 @@ def delete_event(request, event_id):
             return JsonResponse({"success": True})
         else:
             return JsonResponse({"success": False, "error": "Permission denied."})
+
 
 @login_required
 def team_handbook_view(request):
@@ -248,7 +269,8 @@ def todos_view(request, project_id):
         project = get_object_or_404(Project, id=project_id)
 
         # Create a new Todo instance
-        todo = Todo(project=project, description=description, date_due=date_due, priority=priority, is_finished=is_finished, created_by=request.user)
+        todo = Todo(project=project, description=description, date_due=date_due, priority=priority,
+                    is_finished=is_finished, created_by=request.user)
         todo.save()
 
         # Assign users to the todo
@@ -260,10 +282,13 @@ def todos_view(request, project_id):
     users = User.objects.all()
     todos = Todo.objects.filter(project=project_id)
     return render(request, 'specific_pages/todos.html', {'users': users, 'todos': todos, 'project_id': project_id})
+
+
 @login_required
-def todo_detail(request,todo_id):
+def todo_detail(request, todo_id):
     todo = get_object_or_404(Todo, id=todo_id)
     return render(request, 'specific_pages/todo_detail.html', {'todo': todo})
+
 
 @login_required
 def toggle_todo_complete(request, todo_id):
@@ -272,6 +297,7 @@ def toggle_todo_complete(request, todo_id):
     todo.save()
     return redirect('projects:todos', project_id=todo.project.id)
 
+
 def toggle_todo_complete_detail(request, todo_id):
     todo = get_object_or_404(Todo, id=todo_id)
     todo.is_finished = not todo.is_finished
@@ -279,37 +305,21 @@ def toggle_todo_complete_detail(request, todo_id):
     return redirect('projects:todo-detail', todo_id=todo.id)
 
 
-
-@login_required
-def timeline_view(request, project_id):
-    project = get_object_or_404(Project, id=project_id)
-    if request.method == 'POST':
-        event = request.POST.get('event')
-        date = request.POST.get('date')
-        if event and date:
-            Timeline(project=project, event=event, date=date).save()
-    events = Timeline.objects.filter(project=project_id)
-    return render(request, 'specific_pages/timeline.html', {'events': events, 'project_id': project_id})
-
-
-@login_required
-def files_view(request, project_id):
-    project = get_object_or_404(Project, id=project_id)
-    return render(request, 'specific_pages/files.html', {'project': project})
-
-
 @login_required
 def schedule_meets_view(request, project_id):
     project = get_object_or_404(Project, id=project_id)
 
     schedule_meets = ScheduleMeet.objects.filter(project=project)
-    return render(request, 'specific_pages/schedule_meets.html', {'project': project, 'schedule_meets': schedule_meets, 'project_id': project_id})
+    return render(request, 'specific_pages/schedule_meets.html',
+                  {'project': project, 'schedule_meets': schedule_meets, 'project_id': project_id})
+
 
 @login_required
 def delete_meet(request, project_id, meeting_id):
     meet = get_object_or_404(ScheduleMeet, id=meeting_id)
     meet.delete()
     return redirect('projects:schedule-meets', project_id=project_id)
+
 
 @login_required
 def make_meets(request, project_id):
@@ -330,14 +340,16 @@ def make_meets(request, project_id):
             messages.error(request, "Start time must be before end time.")
             return redirect('projects:schedule-meets', project_id=project_id)
 
-        meeting = ScheduleMeet(project=project, start_time=start_time, end_time=end_time, description=description, title=title, meeting_date=meeting_date)
+        meeting = ScheduleMeet(project=project, start_time=start_time, end_time=end_time, description=description,
+                               title=title, meeting_date=meeting_date)
         meeting.save()
-            
+
         return redirect('projects:schedule-meets', project_id=project_id)
 
     schedule_meets = ScheduleMeet.objects.filter(project=project)
 
-    return render(request, 'projects/schedule_meets.html', {'project': project, 'schedule_meets': schedule_meets, 'project_id': project_id})
+    return render(request, 'projects/schedule_meets.html',
+                  {'project': project, 'schedule_meets': schedule_meets, 'project_id': project_id})
 
 
 @require_POST
@@ -353,18 +365,6 @@ def delete_project(request, project_id):
 
 
 @login_required
-def delete_file(request, project_id, file_id):
-    project = get_object_or_404(Project, id=project_id)
-    file_to_delete = get_object_or_404(project.files.all(), id=file_id)
-
-    if request.user.permission_level == 'admin':
-        file_to_delete.delete()
-        return redirect('projects:project_files', project_id=project_id)
-    else:
-        return redirect('projects:project-detail', project_id=project_id)
-    
-
-@login_required
 def delete_project(request, project_id):
     project = get_object_or_404(Project, id=project_id)
 
@@ -372,20 +372,10 @@ def delete_project(request, project_id):
     return redirect('/')
 
 
-
 @login_required
 def delete_todo(request, project_id, todo_id):
     project = get_object_or_404(Project, id=project_id)
     todo_to_delete = get_object_or_404(project.todos.all(), id=todo_id)
 
-    
     todo_to_delete.delete()
     return redirect('projects:todos', project_id=project_id)
-    
-
-
-    
-
-
-    
-

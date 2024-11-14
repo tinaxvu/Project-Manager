@@ -1,6 +1,7 @@
 from django import forms
 from .models import Project, FileUpload, Tag
 
+
 class ProjectForm(forms.ModelForm):
     class Meta:
         model = Project
@@ -9,6 +10,7 @@ class ProjectForm(forms.ModelForm):
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'description': forms.Textarea(attrs={'class': 'form-control'}),
         }
+
 
 class FileUploadForm(forms.ModelForm):
     tag_names = forms.CharField(

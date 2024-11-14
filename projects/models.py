@@ -91,15 +91,6 @@ class FileUpload(models.Model):
         return self.file.name
 
 
-class Timeline(models.Model):
-    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="timeline")
-    event = models.CharField(max_length=100)
-    date = models.DateField()
-
-    def __str__(self):
-        return self.event
-
-
 class ScheduleMeet(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="schedule_meets")
     title = models.CharField(max_length=100)
