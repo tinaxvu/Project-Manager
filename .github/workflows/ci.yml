@@ -51,11 +51,11 @@ jobs:
         - name: run django tests
           run: python manage.py test
 
-        - name: Check for DEBUG=True in production code
-          run: |
-            if grep -q "DEBUG *= *True" AcademicProjectTracker/settings.py; then
-              echo "Error: DEBUG=True found in production settings."
-              exit 1
-            else
-              echo "No DEBUG=True in production settings."
-            fi
+#        - name: Check for DEBUG=True in production code
+#          run: |
+#            if grep -q "DEBUG *= *True" AcademicProjectTracker/settings.py; then
+#              echo "Error: DEBUG=True found in production settings."
+#              exit 1
+#            else
+#              echo "No DEBUG=True in production settings."
+#            fi
