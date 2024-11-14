@@ -138,13 +138,19 @@
             <a href="{% url 'projects:project_files' project.id %}">&#10132;</a>
         </div>
 
-        <!-- Schedule Meets -->
-        <div class="dashboard-item pink text-center h-100">
-            <h2>Schedule Meets</h2>
-            <a href="{% url 'projects:schedule-meets' project.id %}">&#10132;</a>
+
+           <!-- Schedule Meets -->
+           <div class="dashboard-item pink text-center h-100">
+               <h2>Schedule Meets</h2>
+               <a href="{% url 'projects:schedule-meets' %}">&#10132;</a>
+           </div>
+
+           <div class="dashboard-item pink text-center h-100">
+            <h2>Leave Project</h2>
+            <a href="{% url 'projects:leave_project' project.id%}">&#10132;</a>
         </div>
-    </div>
-</div>
+       </div>
+   </div>
 
 {% else %}
 <div class="container">

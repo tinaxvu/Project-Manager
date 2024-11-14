@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 import os
 from pathlib import Path
 import dj_database_url
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,7 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-(0)rp1_@!fj^fw&xgscoocu@_a59n)n3(8t=!%gw(@b!2cpp=$'
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -115,8 +116,8 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',  # keep the default model backend
 )
 
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '963470658186-dkf5s90jfvdtsmje30t9r9d3otlcv651.apps.googleusercontent.com'  # Replace with your actual Client ID
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'  # Replace with your actual Client Secret
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = config('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY')
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = config('SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET')
 
 LOGIN_URL = '/'  # or any custom URL where your login page is located
 LOGOUT_URL = '/'
@@ -155,14 +156,12 @@ if os.environ.get('GITHUB_ACTIONS') != 'true':
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Amazon S3 settings
-from decouple import config
-
 AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
-AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME')
+AWS_STORAGE_BUCKET_NAME = 'b-19-cs3240'
 AWS_S3_REGION_NAME = config('AWS_REGION', default='us-east-2')
 
 # Storage settings
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+AWS_S3_CUSTOM_DOMAIN = 'b-19-cs3240.s3.amazonaws.com'
 AWS_S3_SIGNATURE_VERSION = 's3v4'

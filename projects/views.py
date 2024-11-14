@@ -149,6 +149,15 @@ def request_to_join(request, project_id):
 
 
 @login_required
+def leave_project(request, project_id, ):
+    user = request.user
+    project = get_object_or_404(Project, id=project_id)
+    project.members.remove(user)
+    project.requested.remove(user)
+    return redirect('landing_page')
+
+
+@login_required
 def approve_request(request, project_id, user_id):
     User = get_user_model()
     project = get_object_or_404(Project, id=project_id)
@@ -359,7 +368,7 @@ def delete_project(request, project_id):
 
     if request.user.permission_level == 'admin' or project.owner == request.user:
         project.delete()
-        return redirect('/')
+        return redirect('landing_page')
 
     return JsonResponse({'success': False, 'error': 'You do not have permission to delete this project.'}, status=403)
 
@@ -369,7 +378,7 @@ def delete_project(request, project_id):
     project = get_object_or_404(Project, id=project_id)
 
     project.delete()
-    return redirect('/')
+    return redirect('/landing_page')
 
 
 @login_required

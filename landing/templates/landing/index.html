@@ -52,7 +52,7 @@
     <div class="dashboard-header text-center">
         <h1 class="display-4 mb-3">Project Management Dashboard</h1>
         <p class="lead">Welcome {{ user.first_name }}!</p>
-        <p>Your Role: 
+        <p>Your Role:
             {% if user.permission_level == 'admin' %}
                 <span class="badge bg-primary">Admin</span>
             {% else %}
@@ -142,7 +142,7 @@
         </div>
     </div>
 
-    <!-- Create Project Button -->
+   <!-- Create Project Button -->
     {% if user.permission_level != 'admin' %}
         <a href="{% url 'projects:create-project' %}" class="create-project-btn">
             <i class="fas fa-plus me-2"></i>Create a Project
@@ -160,5 +160,42 @@
         </a>
     </div>
 </div>
-{% endif %}
+   {% endif %}
+
+   <!-- Handle the AJAX submission for Request to Join -->
+   <script>
+       document.addEventListener('DOMContentLoaded', function() {
+           document.querySelectorAll('.request-to-join-btn').forEach(button => {
+               button.addEventListener('click', function(event) {
+                   const projectId = button.getAttribute('data-project-id');
+
+                   fetch(`/projects/${projectId}/request-to-join/`, {
+                       method: 'POST',
+                       headers: {
+                           'X-CSRFToken': '{{ csrf_token }}',
+                           'Content-Type': 'application/json'
+                       }
+                   }).then(response => response.json())
+                   .then(data => {
+                       if (data.success) {
+                           // Change button to 'Requested' and disable it
+                           button.classList.remove('btn-primary');
+                           button.classList.add('btn-secondary');
+                           button.disabled = true;
+                           button.innerHTML = 'Requested';
+
+                           // Show alert
+                           alert('Your request has been sent');
+                       } else if (data.message === 'Already requested') {
+                           // Show already requested alert
+                           alert('You have already requested to join this project');
+                       } else {
+                           alert('Failed to send request');
+                       }
+                   });
+               });
+           });
+       });
+   </script>
+
 {% endblock %}
