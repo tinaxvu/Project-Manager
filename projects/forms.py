@@ -1,5 +1,5 @@
 from django import forms
-from .models import Project, FileUpload, Tag
+from .models import Project, FileUpload, Tag, Message, Thread
 
 
 class ProjectForm(forms.ModelForm):
@@ -30,3 +30,22 @@ class FileUploadForm(forms.ModelForm):
                     tag, created = Tag.objects.get_or_create(name=tag_name, project=project)
                     instance.tags.add(tag)
         return instance
+
+
+class MessageForm(forms.ModelForm): 
+    class Meta: 
+        model = Message
+        fields = ['body']
+        widgets = { 
+            'title': forms.TextInput(attrs={'class':'form-control'}),
+            'body': forms.Textarea(attrs={'class':'form-control'})
+        }
+
+class ThreadForm(forms.ModelForm): 
+    class Meta: 
+        model = Thread
+        fields = ['title','body']
+        widgets = { 
+            'title': forms.TextInput(attrs={'class':'form-control'}),
+            'body': forms.Textarea(attrs={'class':'form-control'})
+        }
