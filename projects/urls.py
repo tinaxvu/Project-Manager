@@ -20,10 +20,10 @@ urlpatterns = [
     path('<int:project_id>/schedule-meets/delete/<int:meeting_id>/', views.delete_meet, name='delete-meet'),
 
     path('<int:project_id>/files/', views.project_files, name='project_files'),
-    path('<int:project_id>/file/<int:file_id>/', views.view_file, name='view_file'),
     path('<int:project_id>/files/delete/<int:file_id>/', views.delete_file, name='delete-file'),
+    path('<int:project_id>/file/<int:file_id>/', views.view_file, name='view_file'),
 
-    path('<int:project_id>/request-to-join/<int:user_id>/', views.request_to_join, name='request-to-join'),
+    path('<int:project_id>/request-to-join/', views.request_to_join, name='request-to-join'),
     path('<int:project_id>/approve-request/<int:user_id>/', views.approve_request, name='approve-request'),
     path('<int:project_id>/deny-request/<int:user_id>/', views.deny_request, name='deny-request'),
 

@@ -2,6 +2,7 @@
 from django.shortcuts import render
 from projects.models import Project
 
+
 def landing_page(request):
     if request.user.is_authenticated:
         # Projects created by the user
@@ -27,7 +28,7 @@ def landing_page(request):
         return render(request, 'landing/index.html', context)
     else:
         all_projects = Project.objects.all()
-        context = { 
+        context = {
             'all_projects': all_projects
         }
         return render(request, 'landing/index.html', context)

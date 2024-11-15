@@ -23,8 +23,8 @@
 </head>
 <body class="container" style="min-height: 100vh;">
     <div class="mt-5">
-        <a href="{% url 'projects:project-detail' project_id=project.id %}" class="btn btn-light mb-3">
-            <i class="fas fa-arrow-left"></i> Back to Project
+        <a href="/" class="btn btn-light mb-3">
+            <i class="fas fa-arrow-left"></i> Back to Home
         </a>
         <h1>Request to Join {{ project.name }}</h1>
     </div>
@@ -43,7 +43,7 @@
 
     <script>
         function requestToJoin(projectId) {
-            fetch(`/projects/request-to-join/${project_id}/`, {
+            fetch(`/projects/${projectId}/request-to-join/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -52,14 +52,18 @@
             })
             .then(response => response.json())
             .then(data => {
-                if (data.requested) {
-                    // Change the button text to "Requested!" and gray it out
-                    const requestButton = document.getElementById('requestButton');
-                    requestButton.textContent = 'Requested!';
-                    requestButton.classList.remove('btn-primary');
-                    requestButton.classList.add('btn-requested');
-                } else {
+                if (!data.success) {
+                    alert(data.message || 'Data not successfuly sent. Please try again.');
+                }
+                else if (data.requested) {
                     alert(data.message || 'Request failed. Please try again.');
+                }
+                else {
+                        // Change the button text to "Requested!" and gray it out
+                        const requestButton = document.getElementById('requestButton');
+                        requestButton.textContent = 'Requested!';
+                        requestButton.classList.remove('btn-primary');
+                        requestButton.classList.add('btn-requested');
                 }
             })
             .catch(error => console.error('Error:', error));

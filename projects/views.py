@@ -1,18 +1,17 @@
-from django.contrib.auth import get_user_model
+import datetime
+import json
+
+import boto3
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_POST
-from .models import Project, Tag
+
 from .forms import ProjectForm, FileUploadForm
-from .utils import get_signed_url
-from django.contrib.auth.decorators import login_required, user_passes_test
 from .models import *
-from django.http import JsonResponse
 from .models import FileUpload
-from django.conf import settings
-import boto3
-import os
-import json
-import datetime
+from .utils import get_signed_url
 
 User = get_user_model()
 
@@ -133,7 +132,7 @@ def project_detail(request, project_id):
     elif project.members.filter(id=request.user.id).exists():
         return render(request, 'project_detail.html', {'project': project})
     else:
-        return render(request, 'request_to_join.html', {'project': project})
+        return render(request, 'specific_pages/request_to_join.html', {'project': project})
 
 
 @login_required
@@ -141,11 +140,15 @@ def request_to_join(request, project_id):
     project = get_object_or_404(Project, id=project_id)
     user = request.user
 
-    if project not in user.projects_requested_by_users.all():
+    # Check if the user has already requested to join the project
+    if not project.requested.filter(id=user.id).exists():
+        # If not, add the user to the requested list
         project.requested.add(user)
         return JsonResponse({'success': True, 'requested': True})
     else:
-        return JsonResponse({'success': False, 'requested': True, 'message': 'Already requested'})
+        # If the user has already requested, send a response with a message
+        return JsonResponse(
+            {'success': False, 'requested': True, 'message': 'You have already requested to join this project.'})
 
 
 @login_required
@@ -159,31 +162,27 @@ def leave_project(request, project_id, ):
 
 @login_required
 def approve_request(request, project_id, user_id):
-    User = get_user_model()
     project = get_object_or_404(Project, id=project_id)
     user = get_object_or_404(User, id=user_id)
 
     if request.user == project.created_by:
         user.requested_projects.remove(project)
         project.members.add(user)
+        project.requested.remove(user)
+
     return redirect('projects:project-detail', project_id=project_id)
 
 
 @login_required
 def deny_request(request, project_id, user_id):
-    User = get_user_model()
     project = get_object_or_404(Project, id=project_id)
     user = get_object_or_404(User, id=user_id)
 
     if request.user == project.created_by:
         user.requested_projects.remove(project)
-        project.denied.add(user)
+        project.requested.remove(user)
 
     return redirect('projects:project-detail', project_id=project_id)
-
-
-from django.contrib import messages
-from .models import Calendar
 
 
 ############ Calendar ############
