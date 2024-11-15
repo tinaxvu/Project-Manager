@@ -12,7 +12,7 @@ class Project(models.Model):
     requested = models.ManyToManyField('users.User', related_name="projects_requested_by_users", blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
+    
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
         # Automatically add creator as a member of the project
@@ -110,3 +110,23 @@ class ScheduleMeet(models.Model):
 
     def __str__(self):
         return self.title
+
+class Thread(models.Model):
+    User = get_user_model()
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="thread")
+    posted_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="thread")
+    title = models.CharField(max_length=100)
+    body = models.TextField()
+    posted_at = models.DateTimeField(default=timezone.now)
+    pinned = models.BooleanField(default=False)
+
+
+class Message(models.Model):
+    User = get_user_model()
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="message")
+    posted_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name="message")
+    title = models.CharField(max_length=100,blank=True)
+    body = models.TextField()
+    posted_at = models.DateTimeField(default=timezone.now)
+    pinned = models.BooleanField(default=False)
+    thread = models.ForeignKey(Thread, on_delete=models.CASCADE, null=True, related_name="message")
