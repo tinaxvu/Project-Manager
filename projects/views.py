@@ -2,8 +2,8 @@ from django.contrib.auth import get_user_model
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_POST
 
-from .models import Project, Tag
-from .forms import ProjectForm, FileUploadForm
+from .models import Project, Tag, Message, Thread
+from .forms import ProjectForm, FileUploadForm, MessageForm, ThreadForm
 from .utils import get_signed_url
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
@@ -195,6 +195,80 @@ def files_view(request, project_id):
 def schedule_meets_view(request):
     return render(request, 'specific_pages/schedule_meets.html')
 
+@login_required
+def message_board_view(request, project_id):
+    project = get_object_or_404(Project, id=project_id)
+    message_form = MessageForm()
+    thread_form = ThreadForm()
+    if request.method == 'POST':
+        if 'message_form' in request.POST: 
+            thread_id = request.POST.get('thread_id')
+            thread = get_object_or_404(Thread, id=thread_id)
+            message_form = MessageForm(request.POST)
+            if message_form.is_valid():
+                message = message_form.save(commit=False)
+                message.project = project
+                message.posted_by = request.user
+                message.thread = thread
+                message.save()
+                return redirect('projects:message_board', project_id=project.id)
+        elif 'thread_form' in request.POST:
+            thread_form = ThreadForm(request.POST)
+            if thread_form.is_valid(): 
+                thread = thread_form.save(commit=False)
+                thread.project = project 
+                thread.posted_by = request.user 
+                thread.save()
+                return redirect('projects:message_board', project_id=project.id)            
+    messages = project.message.all()
+    threads = project.thread.all()
+    threads_with_messages = {}
+    for thread in threads:
+        has_message = any(message.thread.id == thread.id for message in messages)
+        threads_with_messages[thread.id] = has_message
+    print(threads_with_messages)
+    context = {
+        'project': project,
+        'thread_form': thread_form,
+        'message_form': message_form,
+        'messages': messages,
+        'threads': threads,
+        'threads_with_messages': threads_with_messages
+    }
+    return render(request, 'specific_pages/message_board.html',context)
+
+
+@login_required 
+def delete_message(request, project_id, message_id): 
+    project = get_object_or_404(Project, id=project_id)
+    message = get_object_or_404(Message, id=message_id)
+    if request.user.permission_level == 'admin' or message.posted_by == request.user:
+        message.delete()
+        return redirect('projects:message_board', project_id=project_id)
+        
+
+@login_required
+def pin_thread(request, project_id, thread_id):
+    thread = get_object_or_404(Thread, id=thread_id)
+    thread.pinned = True
+    thread.save()
+    return redirect('projects:message_board', project_id=project_id)
+
+
+@login_required
+def unpin_thread(request, project_id, thread_id):
+    thread = get_object_or_404(Thread, id=thread_id)
+    thread.pinned = False
+    thread.save()
+    return redirect('projects:message_board', project_id=project_id)
+
+
+@login_required
+def delete_thread(request, project_id, thread_id): 
+    thread = get_object_or_404(Thread, id=thread_id)
+    if request.user.permission_level == 'admin' or thread.posted_by == request.user:
+        thread.delete()
+        return redirect('projects:message_board', project_id=project_id)
 
 @require_POST
 @login_required
