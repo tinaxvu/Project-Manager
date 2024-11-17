@@ -11,6 +11,7 @@ class User(AbstractUser):
     profile_description = models.TextField(blank=True, null=True)
     requested_projects = models.ManyToManyField('projects.Project', related_name="users_requested_projects", blank=True)
     joined_projects = models.ManyToManyField('projects.Project', related_name="member", blank=True)
+    joined_date = models.DateTimeField(auto_now_add=True)
 
     def owned_projects(self):
         return self.projects.filter(permission_level='owner')

@@ -212,34 +212,35 @@ def fetch_events(request, project_id):
 
 def add_event(request, project_id):
     try:
-      project = get_object_or_404(Project, id=project_id)
-      if request.method == "POST":
-          data = json.loads(request.body)
-          title = data.get("title")
-          description = data.get("description")
-          start_date_str = data.get("start_date")
-          end_date_str = data.get("end_date")
-          type = data.get("type")
+        project = get_object_or_404(Project, id=project_id)
+        if request.method == "POST":
+            data = json.loads(request.body)
+            title = data.get("title")
+            description = data.get("description")
+            start_date_str = data.get("start_date")
+            end_date_str = data.get("end_date")
+            type = data.get("type")
 
-          if not title or not start_date_str or not end_date_str:
-              return JsonResponse({"success": False, "error": "Title and date are required."}, status=400)
+            if not title or not start_date_str or not end_date_str:
+                return JsonResponse({"success": False, "error": "Title and date are required."}, status=400)
 
-          start_date = timezone.make_aware(datetime.datetime.fromisoformat(start_date_str), timezone.utc)
-          end_date = timezone.make_aware(datetime.datetime.fromisoformat(end_date_str), timezone.utc)
+            start_date = timezone.make_aware(datetime.datetime.fromisoformat(start_date_str), timezone.utc)
+            end_date = timezone.make_aware(datetime.datetime.fromisoformat(end_date_str), timezone.utc)
 
-          event = Calendar.objects.create(
-              title=title,
-              description=description,
-              event_date=start_date,
-              end_date=end_date,
-              created_by=request.user,
-              project=project,
-              type=type
-          )
-          return JsonResponse({"id": event.id})
+            event = Calendar.objects.create(
+                title=title,
+                description=description,
+                event_date=start_date,
+                end_date=end_date,
+                created_by=request.user,
+                project=project,
+                type=type
+            )
+            return JsonResponse({"id": event.id})
     except Exception as e:
         print(traceback.format_exc())
         return JsonResponse({"success": False, "error": "An unexpected error occurred."}, status=500)
+
 
 def delete_event(request, event_id):
     if request.method == "DELETE":
@@ -249,11 +250,6 @@ def delete_event(request, event_id):
             return JsonResponse({"success": True})
         else:
             return JsonResponse({"success": False, "error": "Permission denied."})
-
-
-@login_required
-def team_handbook_view(request):
-    return render(request, 'specific_pages/team_handbook.html')
 
 
 @login_required

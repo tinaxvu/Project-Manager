@@ -1,6 +1,7 @@
 # projects/context_processors.py
 from .models import Project
 
+
 def project_context(request):
     if request.user.is_authenticated:
         user_projects = Project.objects.filter(created_by=request.user)

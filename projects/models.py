@@ -58,15 +58,6 @@ class Collaboration(models.Model):
         return self.title
 
 
-class TeamHandbook(models.Model):
-    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="team_handbook")
-    name = models.CharField(max_length=100)
-    description = models.TextField()
-
-    def __str__(self):
-        return f"{self.user.custom_username}'s description"
-
-
 class Tag(models.Model):
     name = models.CharField(max_length=50)
     project = models.ForeignKey('Project', on_delete=models.CASCADE, related_name="tags")
