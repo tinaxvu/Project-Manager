@@ -47,8 +47,8 @@ class ProjectTest(TestCase):
             title='Test meeting',
             description='Test description',
             meeting_date='2028-12-01',
-            start_time='2028-12-01 12:00',
-            end_time='2028-12-01 12:30',
+            start_time='12:00',
+            end_time='12:30',
         )
         meeting.participants.add(self.user)
         self.assertEqual(meeting.title, 'Test meeting')
