@@ -55,7 +55,7 @@
                 if (!data.success) {
                     alert(data.message || 'Data not successfuly sent. Please try again.');
                 }
-                else if (data.requested) {
+                else if (!data.requested) {
                     alert(data.message || 'Request failed. Please try again.');
                 }
                 else {

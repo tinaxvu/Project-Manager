@@ -1,18 +1,19 @@
 import datetime
 import json
+import boto3
 
 from django.conf import settings
-
-import boto3
 from django.contrib import messages
+from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
+from django.utils import timezone
 from django.views.decorators.http import require_POST
 
-from .models import Project, Tag, Message, Thread, FileUpload
+from .models import Project, Tag, Message, Thread, FileUpload, Calendar, Todo, ScheduleMeet
 from .forms import ProjectForm, FileUploadForm, MessageForm, ThreadForm
-from django.contrib.auth.decorators import login_required
+from .utils import get_signed_url
 
 User = get_user_model()
 
@@ -338,10 +339,6 @@ def make_meets(request, project_id):
         description = request.POST.get('description')
         title = request.POST.get('title')
         meeting_date = request.POST.get('meeting_date')
-
-        if not (title and start_time and end_time and meeting_date):
-            messages.error(request, "All fields are required.")
-            return redirect('projects:schedule-meets', project_id=project_id)
 
         if start_time >= end_time:
             messages.error(request, "Start time must be before end time.")
