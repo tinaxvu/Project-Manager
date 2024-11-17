@@ -32,8 +32,11 @@ class ProjectTest(TestCase):
         event = Calendar.objects.create(
             project=self.project,
             title='Test event',
+            description='Test description',
             event_date='2028-12-01 00:00',
-            created_by=self.user
+            end_date='2028-12-01 23:59',
+            created_by=self.user,
+            type='meeting',
         )
         self.assertEqual(event.title, 'Test event')
         self.assertEqual(event.project, self.project)
@@ -44,11 +47,7 @@ class ProjectTest(TestCase):
             title='Test meeting',
             description='Test description',
             meeting_date='2028-12-01',
-            start_time='2028-12-01 12:00',
-            end_time='2028-12-01 12:30',
-            location='Test location',
+            start_time='12:00',
+            end_time='12:30',
         )
-        meeting.participants.add(self.user)
         self.assertEqual(meeting.title, 'Test meeting')
-        self.assertTrue(meeting.participants.filter(id=self.user.id).exists())
-        

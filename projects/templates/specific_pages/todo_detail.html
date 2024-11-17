@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block title %}To-Do Detail{% endblock %}
+
+{% block content %}
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<style>
+    .back-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border: 2px solid white;
+        border-radius: 50%;
+        background-color: transparent;
+        color: white;
+        font-size: 20px;
+        text-decoration: none;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .back-button:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+        color: white;
+    }
+</style>
+
+    <div class="container mt-5">
+        <!-- Back to To-Do List Button -->
+        <a href="{% url 'projects:todos' project_id=todo.project.id %}" class="back-button">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+
+        <div class="card h-100 mt-5">
+            <div class="card-body">
+                <h3 class="card-title">{{ todo.description }}</h3>
+                <p class="card-text">Due: {{ todo.date_due }}</p>
+                <p class="card-text">Priority: {{ todo.priority }}</p>
+                <p class="card-text">Assigned to: 
+                    {% for user in todo.assigned_to.all %}
+                        {{ user.username }}{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                </p>
+                <p class="card-text">Created by: {{ todo.created_by.username }}</p>
+            </div>
+            <div class="card-footer bg-transparent border-top-0 d-flex justify-content-between align-items-center">
+                <a href="{% url 'projects:delete-todo' project_id=todo.project.id todo_id=todo.id %}" class="btn btn-outline-danger btn-sm btn-custom delete-todo-btn">
+                    <i class="fas fa-trash-alt me-2"></i>Delete
+                </a>
+                <a href="{% url 'projects:toggle_todo_complete_detail' todo_id=todo.id %}" class="btn btn-outline-success btn-sm btn-custom toggle-complete-btn">
+                    <i class="fas fa-check-circle me-2"></i>{{ todo.is_finished|yesno:"Complete,Incomplete" }}
+                </a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

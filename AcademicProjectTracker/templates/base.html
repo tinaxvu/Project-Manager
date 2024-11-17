@@ -7,68 +7,32 @@
 
    {% load bootstrap5 %}
    {% bootstrap_css %}
-   <style>
-    body {
-        background-color: #1a4b7a;
-        color:white
-    }
-    .dashboard-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        grid-gap: 20px;
-        padding: 20px;
-    }
-    .dashboard-item {
-        padding: 20px;
-        text-align: center;
-        font-size: 1.2rem;
-        border-radius: 15px;
-        position: relative;
-        color: white;
-        min-height: 100px;
-    }
-    .dashboard-item.pink {
-        background-color: #f68fb0;
-    }
-    .dashboard-item.blue {
-        background-color: #6cc5e0;
-    }
-    .dashboard-item.white-pink {
-        background-color: white;
-        color: #99044e;
-    }
-    .dashboard-item a {
-        position: absolute;
-        bottom: 10px;
-        right: 10px;
-        color: white;
-        font-size: 1.5rem;
-        text-decoration: none;
-    }
-    .delete-project-btn {
-        position: absolute;
-        top: 10px;
-        right: 50px;
-        display: inline-block;
-        width: 30px;
-        height: 30px;
-    }
-    .create-project-btn {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        background-color: #ff007f;
-        color: white;
-        padding: 10px 20px;
-        border-radius: 5px;
-        text-decoration: none;
-        font-weight: bold;
-    }
-    .create-project-btn:hover {
-        background-color: #cc005f;
-    }
-</style>
 
+   <!-- Custom Styles -->
+   <style>
+       body {
+           background: linear-gradient(135deg, #007bff 0%, #00bfff 50%, #007bff 100%);
+           color: #fff;
+           min-height: 100vh;
+       }
+       .card {
+           background-color: rgba(255, 255, 255, 0.1);
+           border: 1px solid rgba(255, 255, 255, 0.2);
+           transition: all 0.3s ease;
+       }
+       .card:hover {
+           background-color: rgba(255, 255, 255, 0.2);
+           transform: translateY(-5px);
+       }
+       .btn-custom {
+           border-radius: 20px;
+           transition: all 0.3s ease;
+       }
+       .btn-custom:hover {
+           transform: translateY(-2px);
+           box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+       }
+   </style>
 </head>
 <body>
    {% if user.is_authenticated %}

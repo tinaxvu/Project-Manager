@@ -6,6 +6,10 @@ class ProjectForm(forms.ModelForm):
     class Meta:
         model = Project
         fields = ['name', 'description']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'description': forms.Textarea(attrs={'class': 'form-control'}),
+        }
 
 
 class FileUploadForm(forms.ModelForm):
@@ -17,6 +21,9 @@ class FileUploadForm(forms.ModelForm):
     class Meta:
         model = FileUpload
         fields = ['file', 'file_title', 'description', 'keywords', 'tag_names']
+        widgets = {
+            'file': forms.FileInput(attrs={'class': 'form-control'}),
+        }
 
     def save(self, commit=True, project=None):
         instance = super().save(commit=False)

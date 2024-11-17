@@ -118,10 +118,9 @@
 
   </div>
 {% if thread.message.all|length > 0 %} 
-<a class="btn btn-primary mt-1 mb-1" data-bs-toggle="collapse" href="#replies{{ thread.id }}" role="button" aria-expanded="false"
->
+<a class="btn btn-primary mt-1 mb-1" data-bs-toggle="collapse" href="#replies{{ thread.id }}" role="button" aria-expanded="false">
   <span class="default-text">View thread</span>
-  <span class="toggled-text" style="display: none;">Hide thread</span>
+  <span class="toggled-text">Hide thread</span>
 </a>
 {% endif %}
 <a class="btn btn-primary mt-1 mb-1" data-bs-toggle="collapse" href="#messageForm{{ thread.id }}" role="button" aria-expanded="false" aria-controls="messageForm">

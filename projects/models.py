@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth import get_user_model
@@ -12,7 +11,7 @@ class Project(models.Model):
     requested = models.ManyToManyField('users.User', related_name="projects_requested_by_users", blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    
+
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
         # Automatically add creator as a member of the project
@@ -40,7 +39,9 @@ class Calendar(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True, null=True)
     event_date = models.DateTimeField()
+    end_date = models.DateTimeField()
     created_by = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name="created_calendar_events")
+    type = models.CharField(max_length=50)
 
     def __str__(self):
         return self.title
@@ -89,27 +90,17 @@ class FileUpload(models.Model):
         return self.file.name
 
 
-class Timeline(models.Model):
-    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="timeline")
-    event = models.CharField(max_length=100)
-    date = models.DateField()
-
-    def __str__(self):
-        return self.event
-
-
 class ScheduleMeet(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="schedule_meets")
     title = models.CharField(max_length=100)
     description = models.TextField(blank=True, null=True)
     meeting_date = models.DateTimeField(default=timezone.now)
-    start_time = models.DateTimeField(default=timezone.now)
-    end_time = models.DateTimeField(default=timezone.now)
-    location = models.CharField(max_length=100, blank=True, null=True)
-    participants = models.ManyToManyField('users.User', related_name="meetings_attending", blank=True)
+    start_time = models.TimeField()
+    end_time = models.TimeField()
 
     def __str__(self):
         return self.title
+
 
 class Thread(models.Model):
     User = get_user_model()
@@ -125,7 +116,7 @@ class Message(models.Model):
     User = get_user_model()
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="message")
     posted_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name="message")
-    title = models.CharField(max_length=100,blank=True)
+    title = models.CharField(max_length=100, blank=True)
     body = models.TextField()
     posted_at = models.DateTimeField(default=timezone.now)
     pinned = models.BooleanField(default=False)
