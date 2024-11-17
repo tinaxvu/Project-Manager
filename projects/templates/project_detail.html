@@ -1,71 +1,103 @@
 {% extends 'base.html' %}
 
-
 {% block title %}Project Management Dashboard{% endblock %}
 
-
 {% block content %}
-   <style>
-       body {
-           background-color: #1a4b7a;
-       }
-       .dashboard-grid {
-           display: grid;
-           grid-template-columns: repeat(3, 1fr);
-           grid-gap: 20px;
-           padding: 50px;
-       }
-       .dashboard-item {
-           padding: 40px;
-           text-align: center;
-           font-size: 1.5rem;
-           border-radius: 20px;
-           color: white;
-           position: relative;
-       }
-       .dashboard-item.pink {
-           background-color: #f68fb0;
-       }
-       .dashboard-item.blue {
-           background-color: #6cc5e0;
-       }
-       .dashboard-item.white-pink {
-           background-color: white;
-           color: #99044e;
-       }
-       .dashboard-item a {
-           position: absolute;
-           bottom: 20px;
-           right: 20px;
-           color: white;
-           font-size: 2rem;
-       }
-       .dashboard-item img {
-           max-width: 100px;
-           margin-bottom: 20px;
-       }
-       h2 {
-           margin-bottom: 20px;
-           font-weight: bold;
-       }
-
-
-       /* Back to Homepage Button */
-       .back-to-homepage {
-           position: fixed;
-           bottom: 20px;
-           right: 20px;
-           background-color: #ff007f;
-           color: white;
-           padding: 10px 20px;
-           border-radius: 5px;
-           text-decoration: none;
-           font-weight: bold;
-       }
-       .back-to-homepage:hover {
-           background-color: #cc005f;
-       }
-   </style>
+<style>
+    body {
+        background: linear-gradient(135deg, #007bff 0%, #00bfff 50%, #007bff 100%);
+        color: #fff;
+    }
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-gap: 20px;
+        padding: 50px;
+    }
+    .dashboard-item {
+        padding: 40px;
+        text-align: center;
+        font-size: 1.5rem;
+        border-radius: 20px;
+        color: white;
+        position: relative;
+        background-color: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .dashboard-item:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+    }
+    .dashboard-item a {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        color: white;
+        font-size: 2rem;
+    }
+    .dashboard-item img {
+        max-width: 100px;
+        margin-bottom: 20px;
+    }
+    .dashboard-item.pink {
+        background-color: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        transition: all 0.3s ease;
+    }
+    .dashboard-item.pink:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+        transform: translateY(-3px);
+    }
+    .dashboard-item.blue {
+        background-color: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        transition: all 0.3s ease;
+    }
+    .dashboard-item.blue:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+        transform: translateY(-3px);
+    }
+    .dashboard-item.white-pink {
+        background-color: white;
+        color: #1a186c;
+    }
+    h2 {
+        margin-bottom: 20px;
+        font-weight: bold;
+    }
+    .back-to-homepage {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background-color: #ff007f;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 20px;
+        text-decoration: none;
+        font-weight: bold;
+    }
+    .back-to-homepage:hover {
+        background-color: #cc005f;
+    }
+    .dashboard-item a {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        color: white;
+        font-size: 1.5rem;
+        border: 2px solid white;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        background-color: transparent;
+    }
+    .dashboard-item a:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+    }
+</style>
 
 
    {% if user.is_authenticated %}
@@ -87,46 +119,35 @@
                <a href="{% url 'projects:team-handbook' %}">&#10132;</a>
            </div>
 
+        <!-- Calendar -->
+        <div class="dashboard-item pink text-center h-100">
+            <h2>Calendar</h2>
+            <a href="{% url 'projects:calendar' project.id %}">&#10132;</a>
+        </div>
 
-           <!-- Calendar -->
-           <div class="dashboard-item pink text-center h-100">
-               <h2>Calendar</h2>
-               <a href="{% url 'projects:calendar' %}">&#10132;</a>
-           </div>
+        <!-- Collaboration -->
+        <div class="dashboard-item blue text-center h-100">
+            <h2>Collaboration</h2>
+            <a href="{% url 'projects:collaboration' project.id %}">&#10132;</a>
+        </div>
 
+        <!-- To-do's -->
+        <div class="dashboard-item blue text-center h-100">
+            <h2>To-do's</h2>
+            <a href="{% url 'projects:todos' project.id %}">&#10132;</a>
+        </div>
 
-           <!-- Collaboration -->
-           <div class="dashboard-item blue text-center h-100">
-               <h2>Collaboration</h2>
-               <a href="{% url 'projects:collaboration' project.id %}">&#10132;</a>
-           </div>
-
-
-           <!-- To-do's -->
-           <div class="dashboard-item blue text-center h-100">
-               <h2>To-do's</h2>
-               <a href="{% url 'projects:todos' %}">&#10132;</a>
-           </div>
-
-
-           <!-- Timeline -->
-           <div class="dashboard-item blue text-center h-100">
-               <h2>Timeline</h2>
-               <a href="{% url 'projects:timeline' %}">&#10132;</a>
-           </div>
-
-
-           <!-- Files -->
-           <div class="dashboard-item pink text-center h-100">
-               <h2>Files</h2>
-               <a href="{% url 'projects:project_files' project.id %}">&#10132;</a>
-           </div>
+        <!-- Files -->
+        <div class="dashboard-item pink text-center h-100">
+            <h2>Files</h2>
+            <a href="{% url 'projects:project_files' project.id %}">&#10132;</a>
+        </div>
 
 
            <!-- Schedule Meets -->
            <div class="dashboard-item pink text-center h-100">
                <h2>Schedule Meets</h2>
-               <a href="{% url 'projects:schedule-meets' %}">&#10132;</a>
+               <a href="{% url 'projects:schedule-meets' project.id %}">&#10132;</a>
            </div>
 
            <div class="dashboard-item pink text-center h-100">
@@ -136,10 +157,9 @@
        </div>
    </div>
 
-
-   {% else %}
-   <div class="container">
-       <h1>You don't have permission to view this project</h1>
-   </div>
-   {% endif %}
+{% else %}
+<div class="container">
+    <h1>You don't have permission to view this project</h1>
+</div>
+{% endif %}
 {% endblock %}

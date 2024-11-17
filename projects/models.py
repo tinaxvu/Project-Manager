@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth import get_user_model
@@ -40,7 +39,9 @@ class Calendar(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True, null=True)
     event_date = models.DateTimeField()
+    end_date = models.DateTimeField()    # Add this for end date
     created_by = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name="created_calendar_events")
+    type = models.CharField(max_length=50)
 
     def __str__(self):
         return self.title
@@ -89,24 +90,15 @@ class FileUpload(models.Model):
         return self.file.name
 
 
-class Timeline(models.Model):
-    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="timeline")
-    event = models.CharField(max_length=100)
-    date = models.DateField()
-
-    def __str__(self):
-        return self.event
-
-
 class ScheduleMeet(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="schedule_meets")
     title = models.CharField(max_length=100)
     description = models.TextField(blank=True, null=True)
     meeting_date = models.DateTimeField(default=timezone.now)
-    start_time = models.DateTimeField(default=timezone.now)
-    end_time = models.DateTimeField(default=timezone.now)
-    location = models.CharField(max_length=100, blank=True, null=True)
-    participants = models.ManyToManyField('users.User', related_name="meetings_attending", blank=True)
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+    #location = models.CharField(max_length=100, blank=True, null=True)
+    #participants = models.ManyToManyField('users.User', related_name="meetings_attending", blank=True)
 
     def __str__(self):
         return self.title

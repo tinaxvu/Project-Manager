@@ -1,7 +1,125 @@
 {% extends 'base.html' %}
 
-{% block title %}Calendar{% endblock %}
+{% block title %}To-Do's{% endblock %}
 
 {% block content %}
-    <h1>Todos</h1>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+
+
+<style>
+        .back-btn-fixed {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            border-radius: 20px;
+            font-size: 16px;
+            padding: 10px 15px;
+        }
+
+        .todos-title {
+            color: white;
+        }
+
+        .btn-view-custom {
+            border: 1px solid black;
+            color: black;
+        }
+
+        .btn-view-custom:hover {
+            background-color: white; /* White background on hover */
+            color: black; /* Keep text color black */
+            transition: background-color 0.3s ease; /* Smooth transition effect */
+        }
+
+</style>
+    <div class="container mt-5">
+        <a href="{% url 'projects:project-detail' project_id %}" class="btn btn-light back-btn-fixed">
+            <i class="fas fa-arrow-left"></i> Back to Project
+        </a>
+        <div class="d-flex justify-content-between align-items-center">
+            <h1 class="todos-title">To-Do's</h1>
+            <!-- Button to trigger modal -->
+            <button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                <i class="fas fa-plus"></i> Add New Todo
+            </button>
+        </div>
+        
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title text-dark" id="exampleModalLabel">Add New Todo</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Form to add new todo -->
+                        <form method="post" action="{% url 'projects:todos' project_id %}">
+                            {% csrf_token %}
+                            <div class="mb-2">
+                                <label for="description" class="form-label text-dark">Description</label>
+                                <input type="text" class="form-control" id="description" name="description" placeholder="Enter description" required>
+                            </div>
+                            <div class="mb-2">
+                                <label for="date_due" class="form-label text-dark">Due Date</label>
+                                <input type="date" class="form-control" id="date_due" name="date_due" placeholder="Select due date" required>
+                            </div>
+                            <div class="mb-2">
+                                <label for="priority" class="form-label text-dark">Priority</label>
+                                <select class="form-select" id="priority" name="priority" required>
+                                    <option value="">Select Priority</option>
+                                    <option value="High">High</option>
+                                    <option value="Medium">Medium</option>
+                                    <option value="Low">Low</option>
+                                </select>
+                            </div>
+                            <div class="mb-2">
+                                <label for="assigned_to" class="form-label text-dark">Assign To</label>
+                                <select class="form-select" id="assigned_to" name="assigned_to" multiple>
+                                    {% for user in users %}
+                                    <option value="{{ user.id }}">{{ user.username }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="mb-2 form-check">
+                                <input type="checkbox" class="form-check-input" id="is_finished" name="is_finished">
+                                <label class="form-check-label text-dark" for="is_finished">Mark as Finished</label>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Add Todo</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- List of all todos -->
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mt-3">
+            {% for todo in todos %}
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h3 class="card-title">{{ todo.description }}</h3>
+                        <p class="card-text">Due: {{ todo.date_due }}</p>
+                        <p class="card-text">Priority: {{ todo.priority }}</p>
+                    </div>
+                    <div class="card-footer bg-transparent border-top-0 d-flex justify-content-between align-items-center">
+                        <a href="{% url 'projects:todo-detail' todo_id=todo.id %}" class="btn btn-view-custom btn-sm">
+                            <i class="fas fa-eye me-2"></i>View
+                        </a>
+                         <a href="{% url 'projects:toggle_todo_complete' todo_id=todo.id %}" class="btn btn-outline-success btn-sm btn-custom toggle-complete-btn">
+                            <i class="fas fa-check-circle me-2"></i>{{ todo.is_finished|yesno:"Complete,Incomplete" }}
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12">
+                <p class="text-center">You have no todos.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
 {% endblock %}
