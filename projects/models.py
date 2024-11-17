@@ -11,7 +11,7 @@ class Project(models.Model):
     requested = models.ManyToManyField('users.User', related_name="projects_requested_by_users", blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    
+
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
         # Automatically add creator as a member of the project
@@ -39,7 +39,7 @@ class Calendar(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True, null=True)
     event_date = models.DateTimeField()
-    end_date = models.DateTimeField()    # Add this for end date
+    end_date = models.DateTimeField()
     created_by = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name="created_calendar_events")
     type = models.CharField(max_length=50)
 
@@ -97,11 +97,10 @@ class ScheduleMeet(models.Model):
     meeting_date = models.DateTimeField(default=timezone.now)
     start_time = models.TimeField()
     end_time = models.TimeField()
-    #location = models.CharField(max_length=100, blank=True, null=True)
-    #participants = models.ManyToManyField('users.User', related_name="meetings_attending", blank=True)
 
     def __str__(self):
         return self.title
+
 
 class Thread(models.Model):
     User = get_user_model()
@@ -117,7 +116,7 @@ class Message(models.Model):
     User = get_user_model()
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="message")
     posted_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name="message")
-    title = models.CharField(max_length=100,blank=True)
+    title = models.CharField(max_length=100, blank=True)
     body = models.TextField()
     posted_at = models.DateTimeField(default=timezone.now)
     pinned = models.BooleanField(default=False)
