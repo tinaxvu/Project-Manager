@@ -50,7 +50,6 @@ class ProjectTest(TestCase):
             start_time='12:00',
             end_time='12:30',
         )
-        meeting.participants.add(self.user)
         self.assertEqual(meeting.title, 'Test meeting')
         self.assertTrue(meeting.participants.filter(id=self.user.id).exists())
         
