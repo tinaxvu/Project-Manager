@@ -443,7 +443,7 @@ def delete_project(request, project_id):
 
     if request.user.permission_level == 'admin' or project.owner == request.user:
         project.delete()
-        return redirect('landing_page')
+        return redirect('/')
 
     return JsonResponse({'success': False, 'error': 'You do not have permission to delete this project.'}, status=403)
 
@@ -453,7 +453,7 @@ def delete_project(request, project_id):
     project = get_object_or_404(Project, id=project_id)
 
     project.delete()
-    return redirect('/landing_page')
+    return redirect('/')
 
 
 @login_required
