@@ -165,3 +165,7 @@ AWS_S3_REGION_NAME = config('AWS_REGION', default='us-east-2')
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 AWS_S3_CUSTOM_DOMAIN = 'b-19-cs3240.s3.amazonaws.com'
 AWS_S3_SIGNATURE_VERSION = 's3v4'
+
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+CSRF_TRUSTED_ORIGINS = ['https://academic-project-tracker-ded80913e758.herokuapp.com/']
