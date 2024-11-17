@@ -38,7 +38,11 @@
     <ul class="list-group">
         {% for user in project.requested.all %}
             <li class="list-group-item d-flex justify-content-between align-items-center">
-                {{ user.username }}
+                <div>
+                    <strong>{{ user.username }}</strong> - <span>{{ user.email }}</span>
+                    <br>
+                    <small>Account created on: {{ user.joined_date|date:"F j, Y" }}</small>
+                </div>
                 <span>
                     <a href="{% url 'projects:approve-request' project.id user.id %}" class="btn btn-success">Approve</a>
                     <a href="{% url 'projects:deny-request' project.id user.id %}" class="btn btn-danger">Deny</a>
@@ -49,10 +53,15 @@
         {% endfor %}
     </ul>
 
+
     <h2 class="mt-5">Current Members</h2>
     <ul class="list-group mb-5">
         {% for member in project.members.all %}
-            <li class="list-group-item">{{ member.username }}</li>
+        <li class="list-group-item">
+            <strong>{{ member.username }}</strong> - <span>{{ member.email }}</span>
+            <br>
+            <small>Account created on: {{ member.joined_date|date:"F j, Y" }}</small>
+        </li>
         {% endfor %}
     </ul>
 </div>
