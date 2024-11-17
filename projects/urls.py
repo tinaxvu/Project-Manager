@@ -38,4 +38,10 @@ urlpatterns = [
     path('<int:project_id>/fetch_events/', views.fetch_events, name='fetch_events'),
     path('<int:project_id>/add_event/', views.add_event, name='add_event'),
     path('delete_event/<int:event_id>/', views.delete_event, name='delete_event'),
+
+    path('<int:project_id>/message_board', views.message_board_view, name="message_board"),
+    path('<int:project_id>/<int:message_id>/delete_message', views.delete_message, name="delete_message"),
+    path('<int:project_id>/<int:thread_id>/pin_thread', views.pin_thread,name="pin_thread"),
+    path('<int:project_id>/<int:thread_id>/unpin_thread', views.unpin_thread,name="unpin_thread"),
+    path('<int:project_id>/<int:thread_id>/delete_thread', views.delete_thread,name="delete_thread")
 ]

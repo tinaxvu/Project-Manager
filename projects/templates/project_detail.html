@@ -99,20 +99,25 @@
     }
 </style>
 
-{% if user.is_authenticated %}
-<div class="container my-5">
-    <h1 class="text-center text-white mt-5">Dashboard</h1>
-    <div class="dashboard-grid mt-5">
-        <!-- Project Name -->
-        <div class="dashboard-item white-pink text-center h-100">
-            <h2>{{ project.name }}</h2>
-        </div>
 
-        <!-- Team Handbook -->
-        <div class="dashboard-item pink text-center h-100">
-            <h2>Team Handbook</h2>
-            <a href="{% url 'projects:team-handbook' %}">&#10132;</a>
-        </div>
+   {% if user.is_authenticated %}
+   <div class="container my-5">
+       <h1 class="text-center text-white mt-5">Dashboard</h1>
+       <div class="dashboard-grid mt-5">
+           <!-- Project Name -->
+           <div class="dashboard-item white-pink text-center h-100">
+              <h2>{{ project.name }}</h2>
+           </div>
+           <div class="dashboard-item blue text-center h-100">
+              <h2>Message Board</h2>
+              <a href="{% url 'projects:message_board' project.id %}">&#10132;</a>
+           </div>
+
+           <!-- Team Handbook -->
+           <div class="dashboard-item pink text-center h-100">
+               <h2>Team Handbook</h2>
+               <a href="{% url 'projects:team-handbook' %}">&#10132;</a>
+           </div>
 
         <!-- Calendar -->
         <div class="dashboard-item pink text-center h-100">

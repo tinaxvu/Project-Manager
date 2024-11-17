@@ -1,0 +1,184 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load tz %}
+{% localtime on %}
+<h1 class="text-center">Project Messages</h1>
+<!-- Pinned Threads -->
+{% for thread in threads %}
+  {% if thread.pinned %}
+  <div class="border px-2 d-flex justify-content-between">
+    <div>
+      <h1>{{ thread.title }}</h1>
+      <p>{{ thread.body }}</p>
+      <p class="mb-0">Posted by: {{ thread.posted_by }}</p>
+      <p class="mb-1">At: {{ thread.posted_at|localtime}}</p>
+    </div>
+    <div>
+      <form method="POST" action="{% url 'projects:unpin_thread' project.id thread.id %}">
+        {% csrf_token %}
+        <button class="btn btn-secondary w-100 mt-2" type="submit">📌 Unpin thread</button>
+      </form>
+      {% if user.permission_level == 'admin' or thread.posted_by == user%}
+      <form method="POST" action="{% url 'projects:delete_thread' project.id thread.id %}">
+        {% csrf_token %}
+        <button class="btn bg-danger text-white w-100" type="submit">Delete thread</button>
+      </form>
+      {% endif %}
+    </div>
+  </div>
+  <div class="collapse" id="replies{{ thread.id }}">
+  {% for message in messages %} 
+    {% if message.thread.id == thread.id %}
+    <div class="border px-2 d-flex justify-content-between">
+      <div>
+        <h1>{{ message.title }}</h1>
+        <p>{{ message.body }}</p>
+        <p class="mb-0">Posted by: {{ message.posted_by }}</p>
+        <p class="mb-1">At: {{ message.posted_at|localtime }}</p>
+      </div>
+      {% if user.permission_level == 'admin' or message.posted_by == user%}
+      <form method="POST" action="{% url 'projects:delete_message' project.id message.id %}">
+        {% csrf_token %}
+        <button class="btn bg-danger text-white mt-2" type="submit">Delete message</button>
+      </form>
+      {% endif %}
+    </div>
+    {% endif %}
+  {% endfor %}  
+  </div>
+  {% if thread.message.all|length > 0 %}  
+  <a class="btn btn-primary mt-1 mb-1" data-bs-toggle="collapse" href="#replies{{ thread.id }}" role="button" aria-expanded="false">
+    <span class="default-text">View thread</span>
+    <span class="toggled-text" >Hide thread</span>
+  </a>
+  {% endif %}
+  <a class="btn btn-primary mt-1 mb-1" data-bs-toggle="collapse" href="#messageForm{{ thread.id}}" role="button" aria-expanded="false" aria-controls="messageForm">
+    Reply
+  </a>
+  <div class="collapse" id="messageForm{{ thread.id }}">
+    <div class="card card-body bg-info">
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="thread_id" value="{{ thread.id }}">
+            <div class="form-group">
+              <label for="{{ message_form.body.id_for_label }}" class="mb-1">Type your reply</label>
+              {{ message_form.body }}  <!-- Render the 'body' textarea field -->
+            </div>
+            <button type="submit" name="message_form" class="btn btn-success mt-1">Submit</button>
+        </form>
+    </div>
+  </div>
+  {% endif %}
+{% endfor %}
+
+<!-- Not pinned threads -->
+{% for thread in threads %}
+  {% if not thread.pinned %}
+  <div class="border px-2 d-flex justify-content-between">
+    <div>
+      <h1>{{ thread.title }}</h1>
+      <p>{{ thread.body }}</p>
+      <p class="mb-0">Posted by: {{ thread.posted_by }}</p>
+      <p class="mb-1">At: {{ thread.posted_at|localtime }}</p>
+    </div>
+    <div class="flex flex-col">
+      <form method="POST" action="{% url 'projects:pin_thread' project.id thread.id %}">
+        {% csrf_token %}
+        <button class="btn btn-secondary w-100" type="submit">Pin thread</button>
+      </form>
+     
+      {% if user.permission_level == 'admin' or thread.posted_by == user%}
+      <form method="POST" action="{% url 'projects:delete_thread' project.id thread.id %}">
+        {% csrf_token %}
+        <button class="btn bg-danger text-white w-100" type="submit">Delete thread</button>
+      </form>
+      {% endif %}
+    </div>
+  </div>
+  <div class="collapse" id="replies{{ thread.id }}">
+
+    {% for message in messages %} 
+    {% if message.thread.id == thread.id %}
+    <div class="border px-2 d-flex justify-content-between">
+      <div>
+        <h1>{{ message.title }}</h1>
+        <p>{{ message.body }}</p>
+        <p class="mb-0">Posted by: {{ message.posted_by }}</p>
+        <p class="mb-">At: {{ message.posted_at|localtime }}</p>
+      </div>
+      {% if user.permission_level == 'admin' or message.posted_by == user%}
+      <form method="POST" action="{% url 'projects:delete_message' project.id message.id %}">
+        {% csrf_token %}
+        <button class="btn bg-danger text-white mt-2" type="submit">Delete message</button>
+      </form>
+      {% endif %}
+    </div>
+    {% endif %}
+    {% endfor %}
+
+  </div>
+{% if thread.message.all|length > 0 %} 
+<a class="btn btn-primary mt-1 mb-1" data-bs-toggle="collapse" href="#replies{{ thread.id }}" role="button" aria-expanded="false">
+  <span class="default-text">View thread</span>
+  <span class="toggled-text">Hide thread</span>
+</a>
+{% endif %}
+<a class="btn btn-primary mt-1 mb-1" data-bs-toggle="collapse" href="#messageForm{{ thread.id }}" role="button" aria-expanded="false" aria-controls="messageForm">
+  Reply
+</a>
+<div class="collapse" id="messageForm{{ thread.id }}">
+  <div class="card card-body bg-info">
+      <form method="POST">
+          {% csrf_token %}
+          <input type="hidden" name="thread_id" value="{{ thread.id }}">
+          <div class="form-group">
+            <label for="{{ message_form.body.id_for_label }} mb-1">Type your reply</label>
+            {{ message_form.body }}  <!-- Render the 'body' textarea field -->
+          </div>
+          <button type="submit" name="message_form" class="btn btn-success">Submit</button>
+      </form>
+  </div>
+</div>
+{% endif %}
+{% endfor %}
+<div>
+  <a class="btn btn-primary mb-1 mt-1" data-bs-toggle="collapse" href="#threadForm" role="button" aria-expanded="false" aria-controls="threadForm">
+    Create new thread
+  </a>
+</div>
+
+<!-- Collapsible Form -->
+<div class="collapse" id="threadForm">
+  <div class="card card-body bg-info">
+      <form method="POST">
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="{{ thread_form.title.id_for_label }}">Title</label>
+            {{ thread_form.title }}  <!-- Render the 'title' input field -->
+          </div>
+          <div class="form-group">
+            <label for="{{ thread_form.body.id_for_label }}">Body</label>
+            {{ thread_form.body }}  <!-- Render the 'body' textarea field -->
+          </div>
+          <button type="submit" name="thread_form" class="btn btn-success mt-1">Submit</button>
+      </form>
+  </div>
+</div>
+<style>
+a[aria-expanded="true"] .default-text {
+  display: none;
+}
+
+a[aria-expanded="true"] .toggled-text {
+  display: inline;
+}
+
+a[aria-expanded="false"] .toggled-text {
+  display: none;
+}
+body {
+  padding-bottom: 50px; /* Ensure space at the bottom of the page */
+}
+</style>
+{% endlocaltime %}
+{% endblock %}
