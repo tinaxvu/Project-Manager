@@ -3,6 +3,12 @@
 {% load tz %}
 {% localtime on %}
 <h1 class="text-center">Project Messages</h1>
+<head>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<a href="{% url 'projects:project-detail' project.id %}" class="back-button">
+  <i class="fas fa-arrow-left"></i>
+</a>
 <!-- Pinned Threads -->
 {% for thread in threads %}
   {% if thread.pinned %}
@@ -21,7 +27,7 @@
       {% if user.permission_level == 'admin' or thread.posted_by == user%}
       <form method="POST" action="{% url 'projects:delete_thread' project.id thread.id %}">
         {% csrf_token %}
-        <button class="btn bg-danger text-white w-100" type="submit">Delete thread</button>
+        <button type="submit" class="btn btn-delete-thread">Delete thread</button>
       </form>
       {% endif %}
     </div>
@@ -90,7 +96,7 @@
       {% if user.permission_level == 'admin' or thread.posted_by == user%}
       <form method="POST" action="{% url 'projects:delete_thread' project.id thread.id %}">
         {% csrf_token %}
-        <button class="btn bg-danger text-white w-100" type="submit">Delete thread</button>
+        <button class="btn btn-delete-thread" type="submit">Delete thread</button>
       </form>
       {% endif %}
     </div>
@@ -142,7 +148,7 @@
 {% endif %}
 {% endfor %}
 <div>
-  <a class="btn btn-primary mb-1 mt-1" data-bs-toggle="collapse" href="#threadForm" role="button" aria-expanded="false" aria-controls="threadForm">
+  <a class="btn btn-create" data-bs-toggle="collapse" href="#threadForm" role="button" aria-expanded="false" aria-controls="threadForm">
     Create new thread
   </a>
 </div>
@@ -178,6 +184,51 @@ a[aria-expanded="false"] .toggled-text {
 }
 body {
   padding-bottom: 50px; /* Ensure space at the bottom of the page */
+}
+.btn-create{
+  background-color: transparent;
+  border: 2px solid white; 
+  color: white;  
+  border-radius: 50px;
+  padding: 10px 30px; 
+}
+.btn-create:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+.back-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: 2px solid white;
+    border-radius: 50%;
+    background-color: transparent;
+    color: white;
+    font-size: 20px;
+    text-decoration: none;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.back-button:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+.btn-delete-thread {
+  color: rgb(162, 14, 14);                 
+    border: 1px solid rgb(162, 14, 14);;      
+    background-color: transparent;  
+    border-radius: 20px;        
+    padding: 5px 15px;          
+    text-align: center;        
+    text-decoration: none;     
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+.btn-delete-thread:hover {
+    background-color: rgba(255, 0, 0, 0.602);       
+    color: white;               
 }
 </style>
 {% endlocaltime %}
