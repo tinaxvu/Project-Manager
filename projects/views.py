@@ -443,7 +443,7 @@ def delete_project(request, project_id):
 
     if request.user.permission_level == 'admin' or project.owner == request.user:
         project.delete()
-        return redirect('')
+        return redirect('/')
 
     return JsonResponse({'success': False, 'error': 'You do not have permission to delete this project.'}, status=403)
 
