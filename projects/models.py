@@ -77,6 +77,12 @@ class FileUpload(models.Model):
     keywords = models.TextField(help_text="Comma-separated list of keywords for the file", blank=True)
     tags = models.ManyToManyField(Tag, related_name="files", blank=True)
 
+    def delete(self, *args, **kwargs):
+        # Delete the file from S3
+        self.file.delete(save=False)
+        # Delete the database record
+        super().delete(*args, **kwargs)
+
     def __str__(self):
         return self.file.name
 

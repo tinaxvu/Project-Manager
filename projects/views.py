@@ -98,11 +98,8 @@ def delete_file(request, project_id, file_id):
     project = get_object_or_404(Project, id=project_id)
     file_to_delete = get_object_or_404(project.files.all(), id=file_id)
 
-    if request.user.permission_level == 'admin':
-        file_to_delete.delete()
-        return redirect('projects:project_files', project_id=project_id)
-    else:
-        return redirect('projects:project-detail', project_id=project_id)
+    file_to_delete.delete()
+    return redirect('projects:project_files', project_id=project_id)
 
 
 @login_required
