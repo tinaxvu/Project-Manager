@@ -138,11 +138,12 @@
             <h2>Schedule Meets</h2>
             <a href="{% url 'projects:schedule-meets' project.id %}">&#10132;</a>
         </div>
-
+        {% if user.permission_level != 'admin' and project.created_by != user %}
         <div class="dashboard-item pink text-center h-100">
             <h2>Leave Project</h2>
-            <a href="{% url 'projects:leave_project' project.id%}">&#10132;</a>
+                <a href="{% url 'projects:leave_project' project.id%}">&#10132;</a>
         </div>
+        {% endif %}
     </div>
 </div>
 
