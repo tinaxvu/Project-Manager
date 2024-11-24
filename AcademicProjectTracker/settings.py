@@ -169,3 +169,5 @@ AWS_S3_SIGNATURE_VERSION = 's3v4'
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 CSRF_TRUSTED_ORIGINS = ['https://academic-project-tracker-ded80913e758.herokuapp.com/']
+
+SECURE_SSL_REDIRECT = True
