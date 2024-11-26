@@ -89,7 +89,7 @@ class FileUpload(models.Model):
 
 class ScheduleMeet(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="schedule_meets")
-    title = models.TextField()
+    title = models.CharField(max_length=200)
     description = models.TextField(blank=True, null=True)
     meeting_date = models.DateTimeField(default=timezone.now)
     start_time = models.TimeField()

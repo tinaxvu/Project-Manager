@@ -340,6 +340,10 @@ def make_meets(request, project_id):
         if start_time >= end_time:
             messages.error(request, "Start time must be before end time.")
             return redirect('projects:schedule-meets', project_id=project_id)
+        
+        if len(title) > 200:
+            messages.error(request, "Title must be less than 200 characters.")
+            return redirect('projects:schedule-meets', project_id=project_id)
 
         meeting = ScheduleMeet(project=project, start_time=start_time, end_time=end_time, description=description,
                                title=title, meeting_date=meeting_date)
