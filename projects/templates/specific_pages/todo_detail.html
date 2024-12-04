@@ -41,10 +41,10 @@
                 <p class="card-text">Created by: {{ todo.created_by.username }}</p>
             </div>
             <div class="card-footer bg-transparent border-top-0 d-flex justify-content-between align-items-center">
-                <a href="{% url 'projects:delete-todo' project_id=todo.project.id todo_id=todo.id %}" class="btn btn-outline-danger btn-sm btn-custom delete-todo-btn">
+                <a href="{% url 'projects:delete-todo' project_id=todo.project.id todo_id=todo.id %}" class="btn btn-danger text-white btn-outline-danger btn-sm btn-custom delete-todo-btn">
                     <i class="fas fa-trash-alt me-2"></i>Delete
                 </a>
-                <a href="{% url 'projects:toggle_todo_complete_detail' todo_id=todo.id %}" class="btn btn-outline-success btn-sm btn-custom toggle-complete-btn">
+                <a href="{% url 'projects:toggle_todo_complete_detail' todo_id=todo.id %}" class="btn btn-success text-white btn-outline-success btn-sm btn-custom toggle-complete-btn">
                     <i class="fas fa-check-circle me-2"></i>{{ todo.is_finished|yesno:"Complete,Incomplete" }}
                 </a>
             </div>
