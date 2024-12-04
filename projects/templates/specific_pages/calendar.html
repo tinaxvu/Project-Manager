@@ -36,7 +36,6 @@
         color: white;
         border-radius: 50px;
         padding: 10px 30px;
-        right: 30px;
     }
     /* Delete button styling */
     .delete-event-btn {
@@ -114,17 +113,16 @@
     }
 </style>
 
-<div class="container text-center mt-4">
+<div class="container mt-4" style="width: 800px; margin: auto; display: flex; justify-content: space-between; align-items: center;"">
     <h1 class="calendar-title">Calendar</h1>
+
+    <!-- Add Event Button -->
+    <button class="add-event-btn" id="openModalBtn" style="margin-left: auto;">Add Event</button>
 </div>
 
 
 <div id="calendar"></div>
 
-<div style="display: flex; justify-content: space-between; align-items: center; padding: 10px;">
-    <!-- Add Event Button -->
-    <button class="add-event-btn" id="openModalBtn" style="margin-left: auto;">Add Event</button>
-</div>
 
 <div>
     <a href="{% url 'projects:project-detail' project.id %}" class="btn btn-light back-btn-fixed">
