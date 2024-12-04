@@ -1,6 +1,8 @@
+from contextlib import AbstractContextManager
+from typing import Any
 from django.test import TestCase
 from django.contrib.auth import get_user_model
-from .models import Project, Todo, Calendar, ScheduleMeet
+from .models import Project, Todo, Calendar, ScheduleMeet, Message, Thread
 from django.urls import reverse
 
 
@@ -51,3 +53,20 @@ class ProjectTest(TestCase):
             end_time='12:30',
         )
         self.assertEqual(meeting.title, 'Test meeting')
+
+    def test_create_message(self):
+        message = Message.objects.create(
+            project=self.project,
+            posted_by=self.user,
+            title='Test message'
+        )
+        self.assertEqual(message.title, 'Test message')
+        self.assertEqual(message.project, self.project)
+
+        reply = Message.objects.create(
+            project=self.project,
+            title='Test reply',
+            posted_by=self.user
+        )
+        self.assertEqual(reply.title, 'Test reply')
+        self.assertEqual(reply.project, self.project)   
