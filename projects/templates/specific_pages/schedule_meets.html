@@ -48,27 +48,6 @@
         word-wrap: break-word; 
         overflow-wrap: break-word; 
     }
-
-.back-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    border: 2px solid white;
-    border-radius: 50%;
-    background-color: transparent;
-    color: white;
-    font-size: 20px;
-    text-decoration: none;
-    transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.back-button:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-    color: white;
-}
-
 .modal-body,
     .modal-header,
     .modal-title {
@@ -130,11 +109,19 @@
     .close:hover {
         color: black;
     }
-
+    .back-btn-fixed {
+        position: fixed;
+        bottom: 30px;
+        left: 30px;
+        border-radius: 20px;
+        font-size: 16px;
+        color: black;
+        background: white;
+    }
 </style>
 <body>
-    <a href="{% url 'projects:project-detail' project.id %}" class="back-button">
-        <i class="fas fa-arrow-left"></i>
+    <a href="{% url 'projects:project-detail' project.id %}" class="btn back-btn-fixed">
+        <i class="fas fa-arrow-left"></i> Back to Project 
     </a>
 
 <div class="container mt-5">

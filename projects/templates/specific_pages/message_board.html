@@ -2,33 +2,71 @@
 {% block content %}
 {% load tz %}
 {% localtime on %}
-<h1 class="messages-title">Project Messages</h1>
-<head>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-</head>
 
-<!-- Back Button -->
-<a href="{% url 'projects:project-detail' project.id %}" class="btn btn-light back-btn-fixed">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+<style>
+    .back-btn-fixed {
+        position: fixed;
+        bottom: 30px;
+        left: 30px;
+        border-radius: 20px;
+        font-size: 16px;
+    }
+
+    .todos-title {
+        color: white;
+    }
+
+    .btn-view-custom {
+        border: 1px solid black;
+        color: black;
+    }
+
+    .btn-view-custom:hover {
+        background-color: grey; /* White background on hover */
+        color: black; /* Keep text color black */
+        transition: background-color 0.3s ease; /* Smooth transition effect */
+    }
+</style>
+
+<div class="container mt-5">
+  <a href="{% url 'projects:project-detail' project.id %}" class="btn btn-light back-btn-fixed">
     <i class="fas fa-arrow-left"></i> Back to Project
-</a>
-
+  </a>
+  <div class="d-flex justify-content-between align-items-center">
+    <h1 class="text-center text-white">Project Messages</h1>
+    <a class="btn btn-create" data-bs-toggle="collapse" href="#threadForm" role="button" aria-expanded="false" aria-controls="threadForm">
+      Create New Thread
+    </a>
+  </div>
+</div>
+{% if not threads %}
+<p class="text-white text-center fs-4">No messages yet</p>
+{% endif %}
 <!-- Pinned Threads -->
 {% for thread in threads %}
   {% if thread.pinned %}
   <div class="border thread">
+    <div class="d-flex justify-content-between align-items-center">
+        <!-- Title -->
+        <h1>{{ thread.title }}</h1>
+
+        <!-- Unpin Button -->
+        <form method="POST" action="{% url 'projects:unpin_thread' project.id thread.id %}">
+            {% csrf_token %}
+            <button class="btn btn-unpin" type="submit">Unpin thread</button>
+        </form>
+    </div>
+
     <div>
-      <h1>{{ thread.title }}</h1>
       <p>{{ thread.body }}</p>
       <p class="mb-0">Posted by: {{ thread.posted_by }}</p>
       <p class="mb-1">At: {{ thread.posted_at|localtime}}</p>
     </div>
 
     <div>
-      <form method="POST" action="{% url 'projects:unpin_thread' project.id thread.id %}">
-        {% csrf_token %}
-        <button class="btn btn-unpin" type="submit">Unpin thread</button>
-      </form>
       {% if user.permission_level == 'admin' or thread.posted_by == user%}
       <form method="POST" action="{% url 'projects:delete_thread' project.id thread.id %}">
         {% csrf_token %}
@@ -72,7 +110,7 @@
             {% csrf_token %}
             <input type="hidden" name="thread_id" value="{{ thread.id }}">
             <div class="form-group">
-              <label for="{{ message_form.body.id_for_label }}" class="mb-1">Type your reply</label>
+              <label for="{{ message_form.body.id_for_label }}" class="mb-1 text-white">Type your reply</label>
               {{ message_form.body }}  <!-- Render the 'body' textarea field -->
             </div>
             <button type="submit" name="message_form" class="btn btn-submitreply">Submit</button>
@@ -86,18 +124,24 @@
 {% for thread in threads %}
   {% if not thread.pinned %}
   <div class="border thread">
+    <div class="d-flex justify-content-between align-items-center">
+        <!-- Title -->
+        <h1>{{ thread.title }}</h1>
+
+        <!-- Pin Button -->
+        <form method="POST" action="{% url 'projects:pin_thread' project.id thread.id %}">
+        {% csrf_token %}
+        <button class="btn btn-pin" type="submit">Pin thread</button>
+      </form>
+    </div>
+
     <div>
-      <h1>{{ thread.title }}</h1>
       <p>{{ thread.body }}</p>
       <p class="mb-0">Posted by: {{ thread.posted_by }}</p>
       <p class="mb-1">At: {{ thread.posted_at|localtime }}</p>
     </div>
-    <div class="flex flex-col">
-      <form method="POST" action="{% url 'projects:pin_thread' project.id thread.id %}">
-        {% csrf_token %}
-        <button class="btn btn-pin" type="submit">Pin thread</button>
-      </form>
 
+    <div class="flex flex-col">
       {% if user.permission_level == 'admin' or thread.posted_by == user%}
       <form method="POST" action="{% url 'projects:delete_thread' project.id thread.id %}">
         {% csrf_token %}
@@ -143,7 +187,7 @@
           {% csrf_token %}
           <input type="hidden" name="thread_id" value="{{ thread.id }}">
           <div class="form-group">
-            <label for="{{ message_form.body.id_for_label }} mb-1">Type your reply</label>
+            <label for="{{ message_form.body.id_for_label }}" class="mb-1 text-white">Type your reply</label>
             {{ message_form.body }}  <!-- Render the 'body' textarea field -->
           </div>
           <button type="submit" name="message_form" class="btn btn-submitreply">Submit</button>
@@ -152,11 +196,6 @@
 </div>
 {% endif %}
 {% endfor %}
-<div>
-  <a class="btn btn-create" data-bs-toggle="collapse" href="#threadForm" role="button" aria-expanded="false" aria-controls="threadForm">
-    Create new thread
-  </a>
-</div>
 
 <!-- Collapsible Form -->
 <div class="collapse" id="threadForm">
@@ -164,11 +203,11 @@
       <form method="POST">
           {% csrf_token %}
           <div class="form-group">
-            <label for="{{ thread_form.title.id_for_label }}">Title</label>
+            <label for="{{ thread_form.title.id_for_label }}" class="text-white">Title</label>
             {{ thread_form.title }}  <!-- Render the 'title' input field -->
           </div>
           <div class="form-group">
-            <label for="{{ thread_form.body.id_for_label }}">Body</label>
+            <label for="{{ thread_form.body.id_for_label }}" class="text-white">Body</label>
             {{ thread_form.body }}  <!-- Render the 'body' textarea field -->
           </div>
           <button type="submit" name="thread_form" class="btn btn-submit">Submit</button>
@@ -191,13 +230,14 @@ body {
   padding-bottom: 50px; /* Ensure space at the bottom of the page */
 }
 .btn-create{
-  background-color: forestgreen;
+  background-color: transparent;
+  border: 2px solid white;
   color: white;
   border-radius: 50px;
   padding: 10px 30px;
 }
 .btn-create:hover {
-  background-color: darkgreen;
+  background-color: rgba(255, 255, 255, 0.2);
   color: white;
 }
 .back-button {
@@ -222,9 +262,10 @@ body {
 }
 
 .btn-delete-thread {
-    color: white;
+    color: rgb(162, 14, 14);
     margin-top: 65px;
-    background-color: red;
+    border: 1px solid rgb(162, 14, 14);;
+    background-color: transparent;
     border-radius: 20px;
     padding: 5px 15px;
     text-align: center;
@@ -232,20 +273,21 @@ body {
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 .btn-delete-thread:hover {
-    background-color: darkred;
+    background-color: rgba(255, 0, 0, 0.602);
     color: white;
 }
 .btn-submit {
-    background-color: green;
+    background-color: transparent;
     margin-top: 10px;
     color: white;
     padding: 8px 13px;
+    border: 1px solid white;
     border-radius: 4px;
     cursor: pointer;
     border-radius: 20px;
 }
 .btn-submit:hover {
-    background-color: darkgreen;
+    background-color: rgba(255, 255, 255, 0.2);
     color: white;
 }
 .card-body {
@@ -259,7 +301,7 @@ body {
     color: white;
     margin-top: 5px;
     border: 1px solid rgb(255, 255, 255);;
-    background-color: transparent;
+    background-color: skyblue;
     border-radius: 20px;
     padding: 5px 15px;
     text-align: center;
@@ -267,51 +309,56 @@ body {
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 .btn-pin:hover {
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: deepskyblue;
     color: white;
 }
 .thread {
     background-color: white;
-    color: black;
     border: 1px solid rgba(255, 255, 255, 0.2);
     transition: all 0.3s ease;
     padding: 20px;
     border-radius: 20px;
     word-wrap: break-word;
     overflow-wrap: break-word;
+
 }
 .messages {
     background-color: white;
-    color: black;
     border: 1px solid rgba(255, 255, 255, 0.2);
     transition: all 0.3s ease;
     padding: 20px;
     border-radius: 20px;
     word-wrap: break-word;
     overflow-wrap: break-word;
+    margin: 10px 0 0 40px; /* Indent replies */
 }
 .btn-viewthread {
-    background-color: gray;
+    background-color: transparent;
     color: white;
     padding: 8px 13px;
+    border: 1px solid white;
+    border-radius: 4px;
     cursor: pointer;
     border-radius: 20px;
     margin: 10px 0;
 }
 .btn-viewthread:hover {
-    background-color: dimgray;
+    background-color: rgba(255, 255, 255, 0.2);
     color: white;
 }
+
 .btn-reply {
-    background-color: gray;
+    background-color: transparent;
     color: white;
     padding: 8px 13px;
+    border: 1px solid white;
+    border-radius: 4px;
     cursor: pointer;
     border-radius: 20px;
     margin: 10px 0;
 }
 .btn-reply:hover {
-    background-color: dimgray;
+    background-color: rgba(255, 255, 255, 0.2);
     color: white;
 }
 .delete-message {
@@ -352,8 +399,8 @@ body {
 .btn-unpin {
     color: white;
     margin-top: 5px;
-    border: 1px solid rgb(255, 255, 255);;
-    background-color: transparent;
+    border: black;
+    background-color: steelblue;
     border-radius: 20px;
     padding: 5px 15px;
     text-align: center;
@@ -361,20 +408,10 @@ body {
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 .btn-unpin:hover {
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: royalblue;
     color: white;
+    border: black;
 }
-
-.back-btn-fixed {
-        position: fixed;
-        bottom: 30px;
-        left: 30px;
-        border-radius: 20px;
-    }
-.messages-title {
-            color: white;
-        }
-
 </style>
 {% endlocaltime %}
 {% endblock %}

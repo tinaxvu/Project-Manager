@@ -7,31 +7,25 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <style>
-    .back-button {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 40px;
-        height: 40px;
-        border: 2px solid white;
-        border-radius: 50%;
-        background-color: transparent;
-        color: white;
-        font-size: 20px;
-        text-decoration: none;
-        transition: background-color 0.3s ease, color 0.3s ease;
+    .btn {
+        border-radius: 20px;
     }
-
-    .back-button:hover {
-        background-color: rgba(255, 255, 255, 0.2);
-        color: white;
+    .back-btn-fixed {
+        position: fixed;
+        bottom: 30px;
+        left: 30px;
+        border-radius: 20px;
+    }
+    .btn-view-custom {
+        color: black;
+        background: white;
     }
 </style>
 
     <div class="container mt-5">
         <!-- Back to To-Do List Button -->
-        <a href="{% url 'projects:todos' project_id=todo.project.id %}" class="back-button">
-            <i class="fas fa-arrow-left"></i>
+        <a href="{% url 'projects:todos' project_id=todo.project.id %}" class="btn btn-view-custom back-btn-fixed">
+            <i class="fas fa-arrow-left"></i> Back to Todos
         </a>
 
         <div class="card h-100 mt-5">

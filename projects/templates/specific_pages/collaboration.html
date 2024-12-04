@@ -22,7 +22,6 @@
     .btn {
         border-radius: 20px;
     }
-
     .back-btn-fixed {
         position: fixed;
         bottom: 30px;
@@ -36,17 +35,19 @@
 
     <h2 class="mt-5">Requests to Join</h2>
     <ul class="list-group">
-        {% for user in project.requested.all %}
+        {% for requestee in project.requested.all %}
             <li class="list-group-item d-flex justify-content-between align-items-center">
                 <div>
-                    <strong>{{ user.username }}</strong> - <span>{{ user.email }}</span>
+                    <strong>{{ requestee.username }}</strong> - <span>{{ requestee.email }}</span>
                     <br>
-                    <small>Account created on: {{ user.joined_date|date:"F j, Y" }}</small>
+                    <small>Account created on: {{ requestee.joined_date|date:"F j, Y" }}</small>
                 </div>
+                {% if user == project.created_by %}
                 <span>
-                    <a href="{% url 'projects:approve-request' project.id user.id %}" class="btn btn-success">Approve</a>
-                    <a href="{% url 'projects:deny-request' project.id user.id %}" class="btn btn-danger">Deny</a>
-                </span>
+                    <a href="{% url 'projects:approve-request' project.id requestee.id %}" class="btn btn-success">Approve</a>
+                    <a href="{% url 'projects:deny-request' project.id requestee.id %}" class="btn btn-danger">Deny</a>
+                </span> 
+                {% endif %}
             </li>
         {% empty %}
             <li class="list-group-item">No requests to join.</li>

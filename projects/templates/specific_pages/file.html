@@ -1,12 +1,27 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<style>
+  .back-btn-fixed {
+   position: fixed;
+   bottom: 30px;
+   left: 30px;
+   border-radius: 20px;
+}
+.btn {
+   background-color: #fff;
+   cursor: pointer;
+}
+.download{
+  color:white;
+}
+</style>
+<a href="{% url 'projects:project_files' project.id  %}" class="btn back-btn-fixed">
+<i class="fas fa-arrow-left"></i> Back to Files
+</a>
 <head>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   </head>
-<a href="{% url 'projects:project-detail' project.id %}" class="back-button">
-    <i class="fas fa-arrow-left"></i>
-</a>
 <h2>{{ file.file_title }}</h2>
 <p><strong>Description:</strong> {{ file.description }}</p>
 <p><strong>Uploaded by:</strong> {{ file.uploaded_by }}</p>
@@ -32,29 +47,7 @@
         {{ file_content }}
     </pre>
 {% else %}
-    <p><a href="{{ file_url }}">Download File</a></p>
+    <p ><a class="download fs-4" href="{{ file_url }}">Download File</a></p>
 {% endif %}
-<style>
-    .back-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    border: 2px solid white;
-    border-radius: 50%;
-    background-color: transparent;
-    color: white;
-    font-size: 20px;
-    text-decoration: none;
-    transition: background-color 0.3s ease, color 0.3s ease;
-    margin: 10px 0;
-}
-
-.back-button:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-    color: white;
-}
-</style>
 {% endblock %}
 
