@@ -32,6 +32,18 @@
             color: black; /* Keep text color black */
             transition: background-color 0.3s ease; /* Smooth transition effect */
         }
+
+        .add-todo-btn {
+            background-color: transparent;
+            border: 2px solid white;
+            color: white;
+            border-radius: 50px;
+            padding: 10px 30px;
+        }
+        .add-todo-btn:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
 </style>
     <div class="container mt-5">
         <a href="{% url 'projects:project-detail' project_id %}" class="btn btn-light back-btn-fixed">
@@ -40,7 +52,7 @@
         <div class="d-flex justify-content-between align-items-center">
             <h1 class="todos-title">To-Do's</h1>
             <!-- Button to trigger modal -->
-            <button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#exampleModal">
+            <button type="button" class="add-todo-btn" data-bs-toggle="modal" data-bs-target="#exampleModal">
                 <i class="fas fa-plus"></i> Add New Todo
             </button>
         </div>
