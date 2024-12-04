@@ -30,3 +30,6 @@ __Computing IDs:__ cru8jn, ncq9fn, frv9sc, kmp3xr, sth3mm
 
 # Check Heroku Logs
 `heroku logs --tail --app academic-project-tracker`
+
+# Resources
+https://www.w3schools.com/js/js_htmldom_eventlistener.asp
