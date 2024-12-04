@@ -261,6 +261,7 @@ def collaboration_view(request, project_id):
 
 @login_required
 def todos_view(request, project_id):
+    project = get_object_or_404(Project, id=project_id)
     if request.method == 'POST':
         # Process the form data
         description = request.POST.get('description')
@@ -271,7 +272,7 @@ def todos_view(request, project_id):
 
         # Assuming there's a project_id in the session or a similar way to determine the project
         # project_id = request.session.get('current_project_id')
-        project = get_object_or_404(Project, id=project_id)
+  
 
         # Create a new Todo instance
         todo = Todo(project=project, description=description, date_due=date_due, priority=priority,
@@ -286,7 +287,7 @@ def todos_view(request, project_id):
 
     users = User.objects.all()
     todos = Todo.objects.filter(project=project_id)
-    return render(request, 'specific_pages/todos.html', {'users': users, 'todos': todos, 'project_id': project_id})
+    return render(request, 'specific_pages/todos.html', {'users': users, 'todos': todos, 'project_id': project_id, 'project': project})
 
 
 @login_required

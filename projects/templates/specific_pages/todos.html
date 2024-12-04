@@ -16,7 +16,6 @@
             left: 30px;
             border-radius: 20px;
             font-size: 16px;
-            padding: 10px 15px;
         }
 
         .todos-title {
@@ -79,7 +78,7 @@
                             <div class="mb-2">
                                 <label for="assigned_to" class="form-label text-dark">Assign To</label>
                                 <select class="form-select" id="assigned_to" name="assigned_to" multiple>
-                                    {% for user in users %}
+                                    {% for user in project.members.all %}
                                     <option value="{{ user.id }}">{{ user.username }}</option>
                                     {% endfor %}
                                 </select>
