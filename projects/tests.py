@@ -6,11 +6,12 @@ from django.urls import reverse
 
 class ProjectTest(TestCase):
     def setUp(self):
-        self.user = get_user_model().objects.create_user(username='tester',email='testuser@gmail.com',password='password')
+        self.user = get_user_model().objects.create_user(username='tester', email='testuser@gmail.com',
+                                                         password='password')
         self.project = Project.objects.create(name='Test Project',
-            description='Testing description', 
-            created_by=self.user
-            )
+                                              description='Testing description',
+                                              created_by=self.user
+                                              )
 
     def test_create_project(self):
         self.assertEqual(self.project.name, 'Test Project')

@@ -10,8 +10,6 @@ urlpatterns = [
 
     path('<int:project_id>/', views.project_detail, name='project-detail'),
 
-    path('team-handbook/', views.team_handbook_view, name='team-handbook'),
-
     path('collaboration/', views.collaboration_view, name='collaboration'),
 
     path('todos/<int:project_id>/', views.todos_view, name='todos'),

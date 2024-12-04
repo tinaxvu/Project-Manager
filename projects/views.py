@@ -98,11 +98,8 @@ def delete_file(request, project_id, file_id):
     project = get_object_or_404(Project, id=project_id)
     file_to_delete = get_object_or_404(project.files.all(), id=file_id)
 
-    if request.user.permission_level == 'admin':
-        file_to_delete.delete()
-        return redirect('projects:project_files', project_id=project_id)
-    else:
-        return redirect('projects:project-detail', project_id=project_id)
+    file_to_delete.delete()
+    return redirect('projects:project_files', project_id=project_id)
 
 
 @login_required
@@ -212,34 +209,35 @@ def fetch_events(request, project_id):
 
 def add_event(request, project_id):
     try:
-      project = get_object_or_404(Project, id=project_id)
-      if request.method == "POST":
-          data = json.loads(request.body)
-          title = data.get("title")
-          description = data.get("description")
-          start_date_str = data.get("start_date")
-          end_date_str = data.get("end_date")
-          type = data.get("type")
+        project = get_object_or_404(Project, id=project_id)
+        if request.method == "POST":
+            data = json.loads(request.body)
+            title = data.get("title")
+            description = data.get("description")
+            start_date_str = data.get("start_date")
+            end_date_str = data.get("end_date")
+            type = data.get("type")
 
-          if not title or not start_date_str or not end_date_str:
-              return JsonResponse({"success": False, "error": "Title and date are required."}, status=400)
+            if not title or not start_date_str or not end_date_str:
+                return JsonResponse({"success": False, "error": "Title and date are required."}, status=400)
 
-          start_date = timezone.make_aware(datetime.datetime.fromisoformat(start_date_str), timezone.utc)
-          end_date = timezone.make_aware(datetime.datetime.fromisoformat(end_date_str), timezone.utc)
+            start_date = timezone.make_aware(datetime.datetime.fromisoformat(start_date_str), timezone.utc)
+            end_date = timezone.make_aware(datetime.datetime.fromisoformat(end_date_str), timezone.utc)
 
-          event = Calendar.objects.create(
-              title=title,
-              description=description,
-              event_date=start_date,
-              end_date=end_date,
-              created_by=request.user,
-              project=project,
-              type=type
-          )
-          return JsonResponse({"id": event.id})
+            event = Calendar.objects.create(
+                title=title,
+                description=description,
+                event_date=start_date,
+                end_date=end_date,
+                created_by=request.user,
+                project=project,
+                type=type
+            )
+            return JsonResponse({"id": event.id})
     except Exception as e:
         print(traceback.format_exc())
         return JsonResponse({"success": False, "error": "An unexpected error occurred."}, status=500)
+
 
 def delete_event(request, event_id):
     if request.method == "DELETE":
@@ -252,22 +250,15 @@ def delete_event(request, event_id):
 
 
 @login_required
-def team_handbook_view(request):
-    return render(request, 'specific_pages/team_handbook.html')
-
-
-@login_required
 def collaboration_view(request, project_id):
     project = get_object_or_404(Project, id=project_id)
+    return render(request, 'specific_pages/collaboration.html', {'project': project})
 
-    if project.created_by == request.user:
-        return render(request, 'specific_pages/collaboration.html', {'project': project})
-    else:
-        return redirect('projects:project-detail', project_id=project.id)
 
 
 @login_required
 def todos_view(request, project_id):
+    project = get_object_or_404(Project, id=project_id)
     if request.method == 'POST':
         # Process the form data
         description = request.POST.get('description')
@@ -278,7 +269,7 @@ def todos_view(request, project_id):
 
         # Assuming there's a project_id in the session or a similar way to determine the project
         # project_id = request.session.get('current_project_id')
-        project = get_object_or_404(Project, id=project_id)
+  
 
         # Create a new Todo instance
         todo = Todo(project=project, description=description, date_due=date_due, priority=priority,
@@ -293,7 +284,7 @@ def todos_view(request, project_id):
 
     users = User.objects.all()
     todos = Todo.objects.filter(project=project_id)
-    return render(request, 'specific_pages/todos.html', {'users': users, 'todos': todos, 'project_id': project_id})
+    return render(request, 'specific_pages/todos.html', {'users': users, 'todos': todos, 'project_id': project_id, 'project': project})
 
 
 @login_required
@@ -346,6 +337,10 @@ def make_meets(request, project_id):
 
         if start_time >= end_time:
             messages.error(request, "Start time must be before end time.")
+            return redirect('projects:schedule-meets', project_id=project_id)
+        
+        if len(title) > 200:
+            messages.error(request, "Title must be less than 200 characters.")
             return redirect('projects:schedule-meets', project_id=project_id)
 
         meeting = ScheduleMeet(project=project, start_time=start_time, end_time=end_time, description=description,

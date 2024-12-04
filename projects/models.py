@@ -58,15 +58,6 @@ class Collaboration(models.Model):
         return self.title
 
 
-class TeamHandbook(models.Model):
-    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="team_handbook")
-    name = models.CharField(max_length=100)
-    description = models.TextField()
-
-    def __str__(self):
-        return f"{self.user.custom_username}'s description"
-
-
 class Tag(models.Model):
     name = models.CharField(max_length=50)
     project = models.ForeignKey('Project', on_delete=models.CASCADE, related_name="tags")
@@ -86,13 +77,19 @@ class FileUpload(models.Model):
     keywords = models.TextField(help_text="Comma-separated list of keywords for the file", blank=True)
     tags = models.ManyToManyField(Tag, related_name="files", blank=True)
 
+    def delete(self, *args, **kwargs):
+        # Delete the file from S3
+        self.file.delete(save=False)
+        # Delete the database record
+        super().delete(*args, **kwargs)
+
     def __str__(self):
         return self.file.name
 
 
 class ScheduleMeet(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="schedule_meets")
-    title = models.CharField(max_length=100)
+    title = models.CharField(max_length=200)
     description = models.TextField(blank=True, null=True)
     meeting_date = models.DateTimeField(default=timezone.now)
     start_time = models.TimeField()

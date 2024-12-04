@@ -39,20 +39,21 @@ class FileUploadForm(forms.ModelForm):
         return instance
 
 
-class MessageForm(forms.ModelForm): 
-    class Meta: 
+class MessageForm(forms.ModelForm):
+    class Meta:
         model = Message
         fields = ['body']
-        widgets = { 
-            'title': forms.TextInput(attrs={'class':'form-control'}),
-            'body': forms.Textarea(attrs={'class':'form-control'})
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control'}),
+            'body': forms.Textarea(attrs={'class': 'form-control'})
         }
 
-class ThreadForm(forms.ModelForm): 
-    class Meta: 
+
+class ThreadForm(forms.ModelForm):
+    class Meta:
         model = Thread
-        fields = ['title','body']
-        widgets = { 
-            'title': forms.TextInput(attrs={'class':'form-control'}),
-            'body': forms.Textarea(attrs={'class':'form-control'})
+        fields = ['title', 'body']
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control'}),
+            'body': forms.Textarea(attrs={'class': 'form-control'})
         }

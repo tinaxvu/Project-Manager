@@ -20,10 +20,6 @@
            border: 1px solid rgba(255, 255, 255, 0.2);
            transition: all 0.3s ease;
        }
-       .card:hover {
-           background-color: rgba(255, 255, 255, 0.2);
-           transform: translateY(-5px);
-       }
        .btn-custom {
            border-radius: 20px;
            transition: all 0.3s ease;
@@ -118,19 +114,29 @@
           <h2>Log in to create and join projects</h2>
           <a href="{% url 'social:begin' 'google-oauth2' %}" class="btn btn-primary mt-3">Login with Google</a>
           <h1 class="mt-5">Available Projects</h1>
-          <div class="dashboard-grid">
-            {% for project in all_projects %}
-            <div class="dashboard-item pink">
-                <h2>{{ project.name }}</h2>
-                <p>{{ project.description }}</p>
-                <p>Owner: {{ project.created_by}}</p>
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 justify-content-center">
+                {% for project in all_projects %}
+                <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="card-title">{{ project.name }}</h2>
+                        <p class="card-text">{{ project.description }}</p>
+                        <p class="card-text">Owner: {{ project.created_by}}</p>
+                    </div>
+                </div>
+                </div>
+                {% empty %}
+                <p class="text-white">No other projects available.</p>
+                {% endfor %}
             </div>
-            {% empty %}
-            <p class="text-center text-white">No other projects available.</p>
-            {% endfor %}
-        </div>
        </div>
    {% endif %}
+
+   <footer style="text-align: center; margin-top: 20px; font-size: 0.9em; color: white; font-weight: bold">
+       <p>
+           This system is a class project, and it is not monitored. No real information should be submitted.
+       </p>
+   </footer>
 
    <!-- Bootstrap JS -->
    {% bootstrap_javascript %}

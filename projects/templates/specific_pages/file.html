@@ -1,7 +1,27 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
+<style>
+  .back-btn-fixed {
+   position: fixed;
+   bottom: 30px;
+   left: 30px;
+   border-radius: 20px;
+}
+.btn {
+   background-color: #fff;
+   cursor: pointer;
+}
+.download{
+  color:white;
+}
+</style>
+<a href="{% url 'projects:project_files' project.id  %}" class="btn back-btn-fixed">
+<i class="fas fa-arrow-left"></i> Back to Files
+</a>
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  </head>
 <h2>{{ file.file_title }}</h2>
 <p><strong>Description:</strong> {{ file.description }}</p>
 <p><strong>Uploaded by:</strong> {{ file.uploaded_by }}</p>
@@ -27,7 +47,7 @@
         {{ file_content }}
     </pre>
 {% else %}
-    <p><a href="{{ file_url }}">Download File</a></p>
+    <p ><a class="download fs-4" href="{{ file_url }}">Download File</a></p>
 {% endif %}
-<a href="{% url 'projects:project_files' project.id %}">Back to files</a>
 {% endblock %}
+

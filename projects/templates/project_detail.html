@@ -100,62 +100,53 @@
 </style>
 
 
-   {% if user.is_authenticated %}
-   <div class="container my-5">
-       <h1 class="text-center text-white mt-5">Dashboard</h1>
-       <div class="dashboard-grid mt-5">
-           <!-- Project Name -->
-           <div class="dashboard-item white-pink text-center h-100">
-              <h2>{{ project.name }}</h2>
-           </div>
-           <div class="dashboard-item blue text-center h-100">
-              <h2>Message Board</h2>
-              <a href="{% url 'projects:message_board' project.id %}">&#10132;</a>
-           </div>
+{% if user.is_authenticated %}
+<div class="container my-5">
+    <h1 class="text-center text-white mt-5">Dashboard</h1>
+    <div class="dashboard-grid mt-5">
 
-           <!-- Team Handbook -->
-           <div class="dashboard-item pink text-center h-100">
-               <h2>Team Handbook</h2>
-               <a href="{% url 'projects:team-handbook' %}">&#10132;</a>
-           </div>
+        <div class="dashboard-item white-pink text-center h-100">
+            <h2 class="m-0">{{ project.name }}</h2>
+            <h3 class="fs-5">Owner: {{ project.created_by }}</h3>
+        </div>
 
-        <!-- Calendar -->
+        <div class="dashboard-item blue text-center h-100">
+            <h2>Message Board</h2>
+            <a href="{% url 'projects:message_board' project.id %}">&#10132;</a>
+        </div>
+
         <div class="dashboard-item pink text-center h-100">
             <h2>Calendar</h2>
             <a href="{% url 'projects:calendar' project.id %}">&#10132;</a>
         </div>
 
-        <!-- Collaboration -->
         <div class="dashboard-item blue text-center h-100">
             <h2>Collaboration</h2>
             <a href="{% url 'projects:collaboration' project.id %}">&#10132;</a>
         </div>
 
-        <!-- To-do's -->
         <div class="dashboard-item blue text-center h-100">
             <h2>To-do's</h2>
             <a href="{% url 'projects:todos' project.id %}">&#10132;</a>
         </div>
 
-        <!-- Files -->
         <div class="dashboard-item pink text-center h-100">
             <h2>Files</h2>
             <a href="{% url 'projects:project_files' project.id %}">&#10132;</a>
         </div>
 
-
-           <!-- Schedule Meets -->
-           <div class="dashboard-item pink text-center h-100">
-               <h2>Schedule Meets</h2>
-               <a href="{% url 'projects:schedule-meets' project.id %}">&#10132;</a>
-           </div>
-
-           <div class="dashboard-item pink text-center h-100">
-            <h2>Leave Project</h2>
-            <a href="{% url 'projects:leave_project' project.id%}">&#10132;</a>
+        <div class="dashboard-item pink text-center h-100">
+            <h2>Schedule Meets</h2>
+            <a href="{% url 'projects:schedule-meets' project.id %}">&#10132;</a>
         </div>
-       </div>
-   </div>
+        {% if user.permission_level != 'admin' and project.created_by != user %}
+        <div class="dashboard-item pink text-center h-100">
+            <h2>Leave Project</h2>
+                <a href="{% url 'projects:leave_project' project.id%}">&#10132;</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
 
 {% else %}
 <div class="container">
