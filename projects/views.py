@@ -252,11 +252,8 @@ def delete_event(request, event_id):
 @login_required
 def collaboration_view(request, project_id):
     project = get_object_or_404(Project, id=project_id)
+    return render(request, 'specific_pages/collaboration.html', {'project': project})
 
-    if project.created_by == request.user:
-        return render(request, 'specific_pages/collaboration.html', {'project': project})
-    else:
-        return redirect('projects:project-detail', project_id=project.id)
 
 
 @login_required

@@ -95,7 +95,7 @@
         </div>
         
         <!-- List of all todos -->
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mt-3">
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mt-3 justify-content-center">
             {% for todo in todos %}
             <div class="col">
                 <div class="card h-100">
@@ -116,7 +116,7 @@
             </div>
             {% empty %}
             <div class="col-12">
-                <p class="text-center">You have no todos.</p>
+                <p class="text-center text-white fs-4">There are currently no todos</p>
             </div>
             {% endfor %}
         </div>
