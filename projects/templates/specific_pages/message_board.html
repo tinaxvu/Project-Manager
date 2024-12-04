@@ -37,7 +37,7 @@
     <i class="fas fa-arrow-left"></i> Back to Project
   </a>
   <div class="d-flex justify-content-between align-items-center">
-    <h1 class="text-center">Project Messages</h1>
+    <h1 class="message-board-title">Project Messages</h1>
     <a class="btn btn-create" data-bs-toggle="collapse" href="#threadForm" role="button" aria-expanded="false" aria-controls="threadForm">
       Create New Thread
     </a>
@@ -69,44 +69,30 @@
       <p class="mb-1">At: {{ thread.posted_at|localtime}}</p>
     </div>
 
-    <div>
-      {% if user.permission_level == 'admin' or thread.posted_by == user%}
-      <form method="POST" action="{% url 'projects:delete_thread' project.id thread.id %}">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-delete-thread" onclick="return confirm('Are you sure you want to delete this thread?');">Delete thread</button>
-      </form>
-      {% endif %}
+    <div class="d-flex justify-content-between align-items-center mt-3">
+        <!-- Left Side: View and Reply Buttons -->
+        <div class="d-flex">
+            <a class="btn btn-viewthread me-2" data-bs-toggle="collapse" href="#replies{{ thread.id }}" role="button" aria-expanded="false">
+                <span class="default-text">View thread</span>
+                <span class="toggled-text">Hide thread</span>
+            </a>
+            <a class="btn btn-reply" data-bs-toggle="collapse" href="#messageForm{{ thread.id }}" role="button" aria-expanded="false" aria-controls="messageForm">
+                Reply
+            </a>
+        </div>
+        <!-- Right Side: Delete Button -->
+         <div class="d-flex">
+            {% if user.permission_level == 'admin' or thread.posted_by == user %}
+            <form method="POST" action="{% url 'projects:delete_thread' project.id thread.id %}">
+                {% csrf_token %}
+                <button class="btn btn-delete-thread" type="submit" onclick="return confirm('Are you sure you want to delete this thread?');">Delete thread</button>
+            </form>
+            {% endif %}
+         </div>
+
+
     </div>
-  </div>
-  <div class="collapse" id="replies{{ thread.id }}">
-  {% for message in messages %}
-    {% if message.thread.id == thread.id %}
-    <div class="border messages">
-      <div>
-        <h1>{{ message.title }}</h1>
-        <p>{{ message.body }}</p>
-        <p class="mb-0">Posted by: {{ message.posted_by }}</p>
-        <p class="mb-1">At: {{ message.posted_at|localtime }}</p>
-      </div>
-      {% if user.permission_level == 'admin' or message.posted_by == user%}
-      <form method="POST" action="{% url 'projects:delete_message' project.id message.id %}">
-        {% csrf_token %}
-        <button class="btn delete-message" type="submit">Delete message</button>
-      </form>
-      {% endif %}
-    </div>
-    {% endif %}
-  {% endfor %}
-  </div>
-  {% if thread.message.all|length > 0 %}
-  <a class="btn btn-viewthread" data-bs-toggle="collapse" href="#replies{{ thread.id }}" role="button" aria-expanded="false">
-    <span class="default-text">View thread</span>
-    <span class="toggled-text" >Hide thread</span>
-  </a>
-  {% endif %}
-  <a class="btn btn-reply" data-bs-toggle="collapse" href="#messageForm{{ thread.id}}" role="button" aria-expanded="false" aria-controls="messageForm">
-    Reply
-  </a>
+
   <div class="collapse" id="messageForm{{ thread.id }}">
     <div class="card card-reply">
         <form method="POST">
@@ -123,7 +109,7 @@
   {% endif %}
 {% endfor %}
 
-<!-- Not pinned threads -->
+
 {% for thread in threads %}
   {% if not thread.pinned %}
   <div class="border thread">
@@ -233,14 +219,14 @@ body {
   padding-bottom: 50px; /* Ensure space at the bottom of the page */
 }
 .btn-create{
-  background-color: transparent;
-  border: 2px solid white;
+  background-color: forestgreen;
+  #border: 2px solid white;
   color: white;
   border-radius: 50px;
   padding: 10px 30px;
 }
 .btn-create:hover {
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: darkgreen;
   color: white;
 }
 .back-button {
@@ -265,10 +251,8 @@ body {
 }
 
 .btn-delete-thread {
-    color: rgb(162, 14, 14);
-    margin-top: 65px;
-    border: 1px solid rgb(162, 14, 14);;
-    background-color: transparent;
+    color: white;
+    background-color: red;
     border-radius: 20px;
     padding: 5px 15px;
     text-align: center;
@@ -276,7 +260,7 @@ body {
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 .btn-delete-thread:hover {
-    background-color: rgba(255, 0, 0, 0.602);
+    background-color: darkred;
     color: white;
 }
 .btn-submit {
@@ -323,6 +307,7 @@ body {
     border-radius: 20px;
     word-wrap: break-word;
     overflow-wrap: break-word;
+    margin-top: 20px;
 
 }
 .messages {
@@ -336,32 +321,25 @@ body {
     margin: 10px 0 0 40px; /* Indent replies */
 }
 .btn-viewthread {
-    background-color: transparent;
+    background-color: grey;
     color: white;
-    padding: 8px 13px;
-    border: 1px solid white;
-    border-radius: 4px;
-    cursor: pointer;
+    padding: 5px 15px;
     border-radius: 20px;
-    margin: 10px 0;
 }
 .btn-viewthread:hover {
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: darkgrey;
     color: white;
 }
 
 .btn-reply {
-    background-color: transparent;
+    background-color: grey;
     color: white;
-    padding: 8px 13px;
-    border: 1px solid white;
-    border-radius: 4px;
-    cursor: pointer;
+    padding: 5px 15px;
     border-radius: 20px;
-    margin: 10px 0;
+    margin: 5px 15px;
 }
 .btn-reply:hover {
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color:darkgrey;
     color: white;
 }
 .delete-message {
@@ -415,6 +393,15 @@ body {
     color: white;
     border: black;
 }
+
+.d-flex .btn {
+    margin: 0 5px;
+}
+
+.message-board-title {
+            color: white;
+        }
+
 </style>
 {% endlocaltime %}
 {% endblock %}
