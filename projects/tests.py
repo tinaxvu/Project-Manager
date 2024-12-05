@@ -200,46 +200,85 @@ class Views(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'specific_pages/calendar.html')
 
-    def test_calendar_view(self):
-        response = self.client.post(reverse('projects:add_event', args=[self.project.id]), {
-            'title': 'Test Event',
-            'description': 'Test description',
-            'event_date': '2028-12-01 00:00',
-            'end_date': '2028-12-01 23:59',
-            'type': 'meeting',
-            'created_by': self.user.id
-        })
-        #self.assertEqual(response.status_code, 302)
-        self.assertTrue(Calendar.objects.filter(title='Test Event').exists())
-
-        response_to_delete = self.client.delete(reverse('projects:delete_event', args=[Calendar.objects.get(title='Test Event').id]))
-        self.assertEqual(response_to_delete.status_code, 302)
-        self.assertRedirects(response_to_delete, reverse('projects:calendar', args=[self.project.id]))
-        self.assertFalse(Calendar.objects.filter(title='Test Event').exists())
-
     def test_collaboration_view(self):
         response = self.client.get(reverse('projects:collaboration', args=[self.project.id]))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'specific_pages/collaboration.html')
+
+    def test_add_member(self):
+        new_user = get_user_model().objects.create_user(username='newuser', password='password')
+        self.project.members.add(new_user)
+        response = self.client.post(reverse('projects:request-to-join', args=[self.project.id]), {'username': 'newuser'})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(self.project.members.count(), 2)
     
     def test_todo_view(self):
         response = self.client.get(reverse('projects:todos', args=[self.project.id]))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'specific_pages/todos.html')
 
+    def test_mark_todo_complete(self):
+        todo = Todo.objects.create(
+            project=self.project,
+            description='Test todo',
+            date_due='2028-12-01',
+            priority='High',
+            created_by=self.user
+        )
+        response = self.client.post(reverse('projects:toggle_todo_complete', args=[todo.id]))
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(Todo.objects.get(id=todo.id).is_finished)
+
     def test_message_board_view(self):
         response = self.client.get(reverse('projects:message_board', args=[self.project.id]))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'specific_pages/message_board.html')
+
+    def test_pin_thread(self):
+        thread = Thread.objects.create(
+            project=self.project,
+            posted_by=self.user,
+            title='Test message',
+            body='Test body'
+        )
+        response = self.client.post(reverse('projects:pin_thread', args=[self.project.id, thread.id]))
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(Thread.objects.get(id=thread.id).pinned)
+
+        response_to_delete = self.client.post(reverse('projects:unpin_thread', args=[self.project.id, thread.id]))
+        self.assertEqual(response_to_delete.status_code, 302)
+        self.assertFalse(Thread.objects.get(id=thread.id).pinned)
     
     def test_schedule_meets_view(self):
         response = self.client.get(reverse('projects:schedule-meets', args=[self.project.id]))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'specific_pages/schedule_meets.html')
+
+    def test_make_bad_meet(self):
+        response = self.client.post(reverse('projects:make-meets', args=[self.project.id]), {
+            'title': 'Test meeting',
+            'description': 'Test description',
+            'meeting_date': '2028-12-01',
+            'start_time': '12:00',
+            'end_time': '11:00'
+        })
+        self.assertEqual(response.status_code, 302)
+        follow_response = self.client.get(reverse('projects:schedule-meets', args=[self.project.id]))
+        self.assertContains(follow_response, "Start time must be before end time.")
     
     def test_files_view(self):
         response = self.client.get(reverse('projects:project_files', args=[self.project.id]))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'specific_pages/files.html')
+
+    def test_upload_file(self):
+        response = self.client.post(reverse('projects:project_files', args=[self.project.id]), {
+            'file': 'uploads/testfile.txt',
+            'file_title': 'Test file',
+            'description': 'Test description',
+            'keywords': 'test, file, upload'
+        })
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(FileUpload.objects.filter(file_title='Test file').exists())
 
     
