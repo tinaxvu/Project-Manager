@@ -200,6 +200,22 @@ class Views(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'specific_pages/calendar.html')
 
+    def test_add_event(self):
+        self.client.login(email='testuser@gmail.com', password='password')
+        response = self.client.post(
+        reverse('projects:add_event', args=[self.project.id]),
+        data=json.dumps({
+            "title": "Test Event",
+            "description": "This is a test description",
+            "start_date": "2028-12-01T00:00:00",
+            "end_date": "2028-12-01T23:59:59",
+            "type": "meeting"
+        }),
+        content_type="application/json"
+    )
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(Calendar.objects.filter(title="Test Event").exists())
+
     def test_collaboration_view(self):
         response = self.client.get(reverse('projects:collaboration', args=[self.project.id]))
         self.assertEqual(response.status_code, 200)
