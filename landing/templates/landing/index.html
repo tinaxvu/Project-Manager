@@ -62,7 +62,7 @@
             {% endif %}
         </p>
     </div>
-
+    {% if user.permission_level != 'admin' %}
     <!-- Your Projects Section -->
     <div class="mb-5">
         <h2 class="text-center mb-4">Your Projects</h2>
@@ -98,7 +98,8 @@
             {% endfor %}
         </div>
     </div>
-
+    {% endif %}
+    {% if user.permission_level != 'admin'%}
     <!-- Joined Projects Section -->
     <div class="mb-5">
         <h2 class="text-center mb-4">Joined Projects</h2>
@@ -134,6 +135,7 @@
             {% endfor %}
         </div>
     </div>
+    {% endif %}
 
     <!-- All Projects Section -->
     <div class="mb-5">
