@@ -1,9 +1,9 @@
-from contextlib import AbstractContextManager
 from typing import Any
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 from .models import Project, Todo, Calendar, ScheduleMeet, Message, Thread, FileUpload, Collaboration
 from django.urls import reverse
+import json
 
 
 class Models(TestCase):
@@ -165,22 +165,57 @@ class Views(TestCase):
             created_by=self.user
             )
         self.client.login(username='tester', password='password')
+
+    def test_unauthenticated_user(self):
+        self.client.logout()
+        response = self.client.get(reverse('projects:project-detail', args=[self.project.id]))
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, f'/?next=/projects/{self.project.id}/')
         
     def test_project_detail_view(self):
         response = self.client.get(reverse('projects:project-detail', args=[self.project.id]))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'project_detail.html')
 
+        self.assertTrue(Project.objects.filter(name='Test Project').exists())
+        self.assertEqual(response.context['project'].name, 'Test Project')
+
     def test_create_project_view(self):
-        response = self.client.get(reverse('projects:create-project'))
+        response = self.client.post(reverse('projects:create-project'), {
+            'name': 'Test Project 2', 
+            'description': 'Testing description 2'})
+        
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(Project.objects.filter(name='Test Project 2').exists())
+
+    def test_create_project_incomplete_fields(self):
+        response = self.client.post(reverse('projects:create-project'), {
+            'name': 'Test Project 3'})
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'create_project.html')
-        self.assertTrue(get_user_model().objects.filter(username='tester').exists())
+        self.assertContains(response, 'This field is required.')
+        self.assertFalse(Project.objects.filter(name='Test Project 3').exists())
 
     def test_calendar_view(self):
         response = self.client.get(reverse('projects:calendar', args=[self.project.id]))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'specific_pages/calendar.html')
+
+    def test_calendar_view(self):
+        response = self.client.post(reverse('projects:add_event', args=[self.project.id]), {
+            'title': 'Test Event',
+            'description': 'Test description',
+            'event_date': '2028-12-01 00:00',
+            'end_date': '2028-12-01 23:59',
+            'type': 'meeting',
+            'created_by': self.user.id
+        })
+        #self.assertEqual(response.status_code, 302)
+        self.assertTrue(Calendar.objects.filter(title='Test Event').exists())
+
+        response_to_delete = self.client.delete(reverse('projects:delete_event', args=[Calendar.objects.get(title='Test Event').id]))
+        self.assertEqual(response_to_delete.status_code, 302)
+        self.assertRedirects(response_to_delete, reverse('projects:calendar', args=[self.project.id]))
+        self.assertFalse(Calendar.objects.filter(title='Test Event').exists())
 
     def test_collaboration_view(self):
         response = self.client.get(reverse('projects:collaboration', args=[self.project.id]))
