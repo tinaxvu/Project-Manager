@@ -109,8 +109,12 @@
                         <a href="{% url 'projects:todo-detail' todo_id=todo.id %}" class="btn btn-view-custom btn-sm">
                             <i class="fas fa-eye me-2"></i>View
                         </a>
-                         <a href="{% url 'projects:toggle_todo_complete' todo_id=todo.id %}" class="btn btn-outline-success btn-sm btn-custom toggle-complete-btn">
-                            <i class="fas fa-check-circle me-2"></i>{{ todo.is_finished|yesno:"Complete,Incomplete" }}
+                        <a href="{% url 'projects:toggle_todo_complete' todo_id=todo.id %}" 
+                            class="btn btn-sm btn-custom toggle-complete-btn {% if todo.is_finished %}btn-outline-success{% else %}btn-outline-dark{% endif %}">
+                            {% if todo.is_finished %}
+                            <i class="fas fa-check-circle me-2"></i>
+                            {% endif %}
+                            {{ todo.is_finished|yesno:"Complete,Incomplete" }}
                         </a>
                     </div>
                 </div>
