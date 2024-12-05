@@ -50,3 +50,6 @@ Frontend:
 - https://medium.com/@kaileegray/creating-a-calendar-app-using-full-calendar-javascript-bootstrap-34366ce3745d
 
 
+ChatGPT
+
+
