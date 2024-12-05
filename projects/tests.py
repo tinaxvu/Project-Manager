@@ -18,6 +18,8 @@ class Models(TestCase):
         self.assertEqual(self.project.name, 'Test Project')
         self.assertEqual(self.project.description, 'Testing description')
         self.assertEqual(self.project.created_by, self.user)
+        self.assertTrue(Project.objects.filter(id=self.project.id).exists())
+        self.assertTrue(get_user_model().objects.filter(username='tester').exists())
 
     def test_create_todo(self):
         todo = Todo.objects.create(
@@ -57,6 +59,7 @@ class Models(TestCase):
         self.assertEqual(event.event_date, '2028-12-01 00:00')
         self.assertEqual(event.end_date, '2028-12-01 23:59')
         self.assertEqual(event.project, self.project)
+        self.assertTrue(Calendar.objects.filter(project=self.project).exists())
 
     def test_delete_calendar_event(self):
         event = Calendar.objects.create(
@@ -176,3 +179,29 @@ class Models(TestCase):
         self.assertEqual(collaboration.title, 'Test collaboration')
         self.assertEqual(collaboration.description, 'Test description')
         self.assertEqual(collaboration.created_by, self.user)
+
+class Views(TestCase):
+    def setUp(self):
+        self.user = get_user_model().objects.create_user(username='tester',email='testuser@gmail.com',password='password')
+        self.project = Project.objects.create(name='Test Project',
+            description='Testing description', 
+            created_by=self.user
+            )
+        self.client.login(username='tester', password='password')
+        
+    def test_project_detail_view(self):
+        response = self.client.get(reverse('projects:project-detail', args=[self.project.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'project_detail.html')
+        self.assertTemplateUsed(response, 'base.html')
+
+    def test_create_project_view(self):
+        response = self.client.get(reverse('projects:create-project'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'create_project.html')
+        self.assertTrue(get_user_model().objects.filter(username='tester').exists())
+
+    def test_calendar_view(self):
+        response = self.client.get(reverse('projects:calendar', args=[self.project.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'specific_pages/calendar.html')
