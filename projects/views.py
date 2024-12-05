@@ -242,7 +242,7 @@ def add_event(request, project_id):
 def delete_event(request, event_id):
     if request.method == "DELETE":
         event = get_object_or_404(Calendar, id=event_id)
-        if event.created_by == request.user:
+        if event.created_by == request.user or request.user.permission_level == 'admin':
             event.delete()
             return JsonResponse({"success": True})
         else:

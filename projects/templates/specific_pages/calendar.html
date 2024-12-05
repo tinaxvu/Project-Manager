@@ -121,7 +121,9 @@
     <h1 class="calendar-title">Calendar</h1>
 
     <!-- Add Event Button -->
+    {% if user.permission_level != 'admin' %}
     <button class="add-event-btn" id="openModalBtn" style="margin-left: auto;">Add Event</button>
+    {% endif %}
 </div>
 
 

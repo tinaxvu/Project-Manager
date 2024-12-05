@@ -52,9 +52,11 @@
         <div class="d-flex justify-content-between align-items-center">
             <h1 class="todos-title">To-Do's</h1>
             <!-- Button to trigger modal -->
+            {% if user.permission_level != 'admin' %}
             <button type="button" class="add-todo-btn" data-bs-toggle="modal" data-bs-target="#exampleModal">
                 <i class="fas fa-plus"></i> Add New Todo
             </button>
+            {% endif %}
         </div>
         
         <!-- Modal -->

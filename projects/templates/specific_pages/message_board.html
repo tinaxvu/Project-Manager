@@ -37,9 +37,11 @@
   </a>
   <div class="d-flex justify-content-between align-items-center">
     <h1 class="text-center text-white">Project Messages</h1>
+    {% if user.permission_level != 'admin' %}
     <a class="btn btn-create" data-bs-toggle="collapse" href="#threadForm" role="button" aria-expanded="false" aria-controls="threadForm">
       Create New Thread
     </a>
+    {% endif %}
   </div>
 </div>
 {% if not threads %}
@@ -48,7 +50,7 @@
 <!-- Pinned Threads -->
 {% for thread in threads %}
   {% if thread.pinned %}
-  <div class="border thread">
+  <div class="border thread mt-2">
     <div class="d-flex justify-content-between align-items-center">
         <!-- Title -->
         <h1>{{ thread.title }}</h1>
@@ -101,9 +103,11 @@
     <span class="toggled-text" >Hide thread</span>
   </a>
   {% endif %}
+  {% if user.permission_level != 'admin' %}
   <a class="btn btn-reply" data-bs-toggle="collapse" href="#messageForm{{ thread.id}}" role="button" aria-expanded="false" aria-controls="messageForm">
     Reply
   </a>
+  {% endif %}
   <div class="collapse" id="messageForm{{ thread.id }}">
     <div class="card card-reply">
         <form method="POST">
@@ -123,7 +127,7 @@
 <!-- Not pinned threads -->
 {% for thread in threads %}
   {% if not thread.pinned %}
-  <div class="border thread">
+  <div class="border thread mt-2">
     <div class="d-flex justify-content-between align-items-center">
         <!-- Title -->
         <h1>{{ thread.title }}</h1>
@@ -178,9 +182,11 @@
   <span class="toggled-text">Hide thread</span>
 </a>
 {% endif %}
+{% if user.permission_level != 'admin' %}
 <a class="btn btn-reply" data-bs-toggle="collapse" href="#messageForm{{ thread.id }}" role="button" aria-expanded="false" aria-controls="messageForm">
   Reply
 </a>
+{% endif %}
 <div class="collapse" id="messageForm{{ thread.id }}">
   <div class="card card-reply">
       <form method="POST">
