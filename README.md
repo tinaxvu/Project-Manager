@@ -36,13 +36,16 @@ __Computing IDs:__ cru8jn, ncq9fn, frv9sc, kmp3xr, sth3mm
 
 # Resources
 Overall: https://docs.djangoproject.com/en/5.1/intro/tutorial01/
+
 Google Auth: https://www.youtube.com/watch?v=yO6PP0vEOMc
-S3 Bucket implementation: https://www.youtube.com/watch?v=JQVQcNN0cXE
+
+S3 Bucket Implementation: https://www.youtube.com/watch?v=JQVQcNN0cXE
+
 Event Listener: https://www.w3schools.com/js/js_htmldom_eventlistener.asp
+
 Frontend: 
 - https://mkdev.me/posts/fundamentals-of-front-end-django
 - https://www.w3schools.com/css/tryit.asp?filename=trycss_buttons_hover
 - https://rafaltomal.com/tips/move-button-on-hover/
-- 
 
 
