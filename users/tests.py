@@ -10,3 +10,9 @@ class UserTests(TestCase):
         response = self.client.get(reverse('landing_page'))
 
         self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'landing/index.html')
+        self.assertContains(response, 'Welcome')
+
+    def test_logged_out_user_profile_view(self):
+        response = self.client.get(reverse('landing_page'))
+        self.assertEqual(response.status_code, 200)
