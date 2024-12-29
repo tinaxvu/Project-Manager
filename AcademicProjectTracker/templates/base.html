@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>{% block title %}Project Management{% endblock %}</title>
+
+   {% load bootstrap5 %}
+   {% bootstrap_css %}
+
+   <!-- Custom Styles -->
+   <style>
+       body {
+           background: linear-gradient(135deg, #007bff 0%, #00bfff 50%, #007bff 100%);
+           color: #fff;
+           min-height: 100vh;
+       }
+       .card {
+           background-color: rgba(255, 255, 255, 0.1);
+           border: 1px solid rgba(255, 255, 255, 0.2);
+           transition: all 0.3s ease;
+       }
+       .btn-custom {
+           border-radius: 20px;
+           transition: all 0.3s ease;
+       }
+       .btn-custom:hover {
+           transform: translateY(-2px);
+           box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+       }
+       .navbar {
+           background-color: deepskyblue;
+        }
+       .navbar-brand,
+        .navbar .nav-link {
+            color: #fff; /* White text */
+        }
+   </style>
+</head>
+<body>
+   {% if user.is_authenticated %}
+       <!-- Navbar for authenticated users -->
+       <nav class="navbar navbar-expand-lg">
+           <div class="container-fluid">
+               <!-- Brand name -->
+               <a class="navbar-brand" href="{% url 'landing_page' %}">Project Management</a>
+
+               <!-- Navbar toggler (for mobile view) -->
+               <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                   <span class="navbar-toggler-icon"></span>
+               </button>
+
+               <!-- Navbar links -->
+               <div class="collapse navbar-collapse" id="navbarNav">
+                   <ul class="navbar-nav ms-auto">
+                       <!-- Home Button -->
+                       <li class="nav-item">
+                           <a class="nav-link" href="{% url 'landing_page' %}">Home</a>
+                       </li>
+
+                       <!-- Dropdown for Your Projects -->
+                       <li class="nav-item dropdown">
+                           <a class="nav-link dropdown-toggle" href="#" id="yourProjectsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                               Your Projects
+                           </a>
+                           <ul class="dropdown-menu" aria-labelledby="yourProjectsDropdown">
+                               {% for project in user_projects %}
+                                   <li>
+                                       <a class="dropdown-item" href="{% url 'projects:project-detail' project.id %}">
+                                           {{ project.name }}
+                                       </a>
+                                   </li>
+                               {% empty %}
+                                   <li><a class="dropdown-item">No projects</a></li>
+                               {% endfor %}
+                           </ul>
+                       </li>
+
+                       <!-- Dropdown for Joined Projects -->
+                       <li class="nav-item dropdown">
+                           <a class="nav-link dropdown-toggle" href="#" id="joinedProjectsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                               Joined Projects
+                           </a>
+                           <ul class="dropdown-menu" aria-labelledby="joinedProjectsDropdown">
+                               {% for project in joined_projects %}
+                                   <li>
+                                       <a class="dropdown-item" href="{% url 'projects:project-detail' project.id %}">
+                                           {{ project.name }}
+                                       </a>
+                                   </li>
+                               {% empty %}
+                                   <li><a class="dropdown-item">No joined projects</a></li>
+                               {% endfor %}
+                           </ul>
+                       </li>
+
+                       <!-- Logout -->
+                       <li class="nav-item">
+                           <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                       </li>
+                   </ul>
+               </div>
+           </div>
+       </nav>
+
+       <!-- Main content area for authenticated users -->
+       <div class="container mt-5">
+           {% block content %}
+           <!-- Page-specific content will go here -->
+           {% endblock %}
+       </div>
+
+   {% else %}
+       <!-- Blank screen for non-authenticated users with login prompt -->
+       <div class="container text-center mt-5 text-white">
+          <h1>Welcome to the PMA</h1>
+          <h2>Log in to create and join projects</h2>
+          <a href="{% url 'social:begin' 'google-oauth2' %}" class="btn btn-primary mt-3">Login with Google</a>
+          <h1 class="mt-5">Available Projects</h1>
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 justify-content-center">
+                {% for project in all_projects %}
+                <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="card-title">{{ project.name }}</h2>
+                        <p class="card-text">{{ project.description }}</p>
+                        <p class="card-text">Owner: {{ project.created_by}}</p>
+                    </div>
+                </div>
+                </div>
+                {% empty %}
+                <p class="text-white">No other projects available.</p>
+                {% endfor %}
+            </div>
+       </div>
+   {% endif %}
+
+   <footer style="text-align: center; margin-top: 20px; font-size: 0.9em; color: white; font-weight: bold">
+       <p>
+           This system is a class project, and it is not monitored. No real information should be submitted.
+       </p>
+   </footer>
+
+   <!-- Bootstrap JS -->
+   {% bootstrap_javascript %}
+</body>
+</html>
