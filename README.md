@@ -1,4 +1,4 @@
-# Project Manager Application
+# Project Manager Application 
 
 __Names:__ Youness Charfaoui, Jerry Gu, Samyu Krishnasamy, Tina Vu, Grant Zou
 
