@@ -1,0 +1,61 @@
+name: Automated Tests
+
+on: 
+    push:
+        branches:
+            - main
+    pull_request:
+        branches:
+            - main
+    workflow_dispatch:
+jobs:
+  build:
+      env:
+        SECRET_KEY: ${{ secrets.SECRET_KEY }}
+        SOCIAL_AUTH_GOOGLE_OAUTH2_KEY: ${{ secrets.SOCIAL_AUTH_GOOGLE_OAUTH2_KEY }}
+        SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET: ${{ secrets.SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET }}
+      runs-on: ubuntu-latest
+      permissions:
+        id-token: write
+        contents: read
+        issues: write
+      steps:
+        - name: checkout repo
+          uses: actions/checkout@v3
+
+        - name: set up python
+          uses: actions/setup-python@v4
+          with:
+            python-version: '3.11'
+
+        - name: install dependencies
+          run: |
+            python -m pip install --upgrade pip
+            pip install -r requirements.txt
+
+        - name: Set AWS Credentials
+          uses: aws-actions/configure-aws-credentials@v4
+          with:
+            aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+            aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            aws-region: us-east-2
+
+        - name: Sync to S3
+          run: aws s3 sync . s3://$S3_BUCKET_NAME/
+          env:
+            S3_BUCKET_NAME: ${{ secrets.AWS_STORAGE_BUCKET_NAME }}
+
+        - name: set up database
+          run: python manage.py migrate
+
+        - name: run django tests
+          run: python manage.py test
+
+        - name: Check for DEBUG=True in production code
+          run: |
+            if grep -q "DEBUG *= *True" AcademicProjectTracker/settings.py; then
+              echo "Error: DEBUG=True found in production settings."
+              exit 1
+            else
+              echo "No DEBUG=True in production settings."
+            fi
