@@ -119,6 +119,8 @@ AUTHENTICATION_BACKENDS = (
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = config('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY')
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = config('SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET')
 
+SOCIAL_AUTH_GOOGLE_OAUTH2_REDIRECT_URI = "http://127.0.0.1:8000/auth/complete/google-oauth2/"
+
 LOGIN_URL = '/'  # or any custom URL where your login page is located
 LOGOUT_URL = '/'
 LOGIN_REDIRECT_URL = '/'  # Where the user is redirected after successful login
